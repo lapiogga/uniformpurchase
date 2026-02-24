@@ -1,3 +1,8 @@
+/**
+ * [수정 이력]
+ * - 2026-02-24 18:10: Next.js 15 업그레이드에 따른 searchParams 비동기 처리 대응
+ * - 조치: searchParams 타입을 Promise로 변경하고 await 구문 추가
+ */
 import { getProducts, getCategories } from "@/actions/products";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -10,12 +15,13 @@ import { formatCurrency } from "@/lib/utils";
 export default async function ProductListPage({
     searchParams,
 }: {
-    searchParams: { search?: string; category?: string };
+    searchParams: Promise<{ search?: string; category?: string }>;
 }) {
+    const params = await searchParams;
     const [productsResult, categoriesResult] = await Promise.all([
         getProducts({
-            search: searchParams.search,
-            categoryId: searchParams.category,
+            search: params.search,
+            categoryId: params.category,
         }),
         getCategories(),
     ]);
@@ -41,12 +47,12 @@ export default async function ProductListPage({
                     <Input
                         placeholder="품목명으로 검색..."
                         className="pl-10"
-                        defaultValue={searchParams.search}
+                        defaultValue={params.search}
                     />
                 </div>
                 <select
                     className="h-9 rounded-[4px] border border-input bg-background px-3 py-1 text-sm shadow-sm outline-none"
-                    defaultValue={searchParams.category || ""}
+                    defaultValue={params.category || ""}
                 >
                     <option value="">전체 카테고리</option>
                     {categories.map((cat: any) => (

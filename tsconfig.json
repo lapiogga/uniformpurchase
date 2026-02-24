@@ -14,10 +14,11 @@
     "isolatedModules": true,
     "moduleDetection": "force",
     "allowJs": true,
+    "baseUrl": ".",
     "jsx": "preserve",
     "paths": {
       "@/*": [
-        "./*"
+        "./src/*"
       ]
     },
     "allowImportingTsExtensions": true,

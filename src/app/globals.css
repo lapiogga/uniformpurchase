@@ -1,24 +1,18 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/*
+ * [수정 이력]
+ * - 2026-02-24 17:55: Tailwind v4 하에서 디자인 미적용(Unstyled) 현상 발생
+ * - 조치: v4 표준인 @import "tailwindcss" 구문으로 변경 및 테마 설정 최적화
+ */
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #1d4ed8;
+  --color-secondary: #faf7f2;
+}
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --primary: #1d4ed8;
-  --primary-foreground: #ffffff;
-  --secondary: #faf7f2;
-  --secondary-foreground: #1d4ed8;
-  --muted: #f4f4f5;
-  --muted-foreground: #71717a;
-  --accent: #f4f4f5;
-  --accent-foreground: #18181b;
-  --destructive: #ef4444;
-  --destructive-foreground: #fafafa;
-  --border: #e4e4e7;
-  --input: #e4e4e7;
-  --ring: #1d4ed8;
-  --radius: 0.25rem;
 }
 
 body {
@@ -28,5 +22,8 @@ body {
 }
 
 .auth-card {
-  @apply bg-white border border-zinc-200 rounded-[4px] shadow-sm;
+  background-color: white;
+  border: 1px solid #e4e4e7;
+  border-radius: 4px;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }

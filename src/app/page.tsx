@@ -1,3 +1,8 @@
+/**
+ * [수정 이력]
+ * - 2026-02-24 17:40: 사용자 편의를 위한 테스트 계정 정보 노출 필요
+ * - 조치: 로그인 폼 하단에 권한별 테스트 계정 정보 섹션 추가
+ */
 'use client';
 
 import { useState } from 'react';
@@ -81,6 +86,24 @@ export default function LoginPage() {
                         </Button>
                     </div>
                 </form>
+
+                <div className="mt-6 pt-6 border-t border-zinc-100">
+                    <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">테스트 계정 (비밀번호 무관)</p>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div className="p-2 bg-zinc-50 rounded">
+                            <span className="font-bold text-zinc-700">관리자:</span><br />admin@mil.kr
+                        </div>
+                        <div className="p-2 bg-zinc-50 rounded">
+                            <span className="font-bold text-zinc-700">일반:</span><br />hong@mil.kr
+                        </div>
+                        <div className="p-2 bg-zinc-50 rounded">
+                            <span className="font-bold text-zinc-700">판매소:</span><br />store1@mil.kr
+                        </div>
+                        <div className="p-2 bg-zinc-50 rounded">
+                            <span className="font-bold text-zinc-700">체척업체:</span><br />tailor1@mil.kr
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );

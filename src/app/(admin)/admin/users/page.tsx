@@ -1,3 +1,8 @@
+/**
+ * [수정 이력]
+ * - 2026-02-24 18:10: Next.js 15 업그레이드에 따른 searchParams 비동기 처리 대응
+ * - 조치: searchParams 타입을 Promise로 변경하고 await 구문 추가
+ */
 import { getUsers } from "@/actions/users";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -9,11 +14,12 @@ import Link from "next/link";
 export default async function UserListPage({
     searchParams,
 }: {
-    searchParams: { search?: string; role?: string };
+    searchParams: Promise<{ search?: string; role?: string }>;
 }) {
+    const params = await searchParams;
     const result = await getUsers({
-        search: searchParams.search,
-        role: searchParams.role,
+        search: params.search,
+        role: params.role,
     });
 
     const users = result.success ? result.data : [];
@@ -43,7 +49,7 @@ export default async function UserListPage({
                     <Input
                         placeholder="이름 또는 군번으로 검색..."
                         className="pl-10"
-                        defaultValue={searchParams.search}
+                        defaultValue={params.search}
                     />
                 </div>
                 <Button variant="outline">검색</Button>

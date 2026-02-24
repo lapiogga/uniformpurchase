@@ -1,3 +1,8 @@
+/**
+ * [수정 이력]
+ * - 2026-02-24 18:10: Next.js 15 업그레이드에 따른 searchParams 비동기 처리 대응
+ * - 조치: searchParams 타입을 Promise로 변경하고 await 구문 추가
+ */
 import { getInventory } from "@/actions/inventory";
 import { getCategories } from "@/actions/products";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -9,15 +14,16 @@ import { PackagePlus, Search, AlertTriangle, History } from "lucide-react";
 export default async function InventoryPage({
     searchParams,
 }: {
-    searchParams: { search?: string; category?: string };
+    searchParams: Promise<{ search?: string; category?: string }>;
 }) {
+    const params = await searchParams;
     // Mock store ID for now
     const storeId = "00000000-0000-0000-0000-000000000001";
 
     const [inventoryResult, categoriesResult] = await Promise.all([
         getInventory(storeId, {
-            search: searchParams.search,
-            categoryId: searchParams.category,
+            search: params.search,
+            categoryId: params.category,
         }),
         getCategories(),
     ]);
@@ -41,12 +47,12 @@ export default async function InventoryPage({
                     <Input
                         placeholder="품목명으로 재고 검색..."
                         className="pl-10"
-                        defaultValue={searchParams.search}
+                        defaultValue={params.search}
                     />
                 </div>
                 <select
                     className="h-9 rounded-[4px] border border-input bg-background px-3 py-1 text-sm shadow-sm outline-none"
-                    defaultValue={searchParams.category || ""}
+                    defaultValue={params.category || ""}
                 >
                     <option value="">전체 카테고리</option>
                     {categories.map((cat: any) => (
