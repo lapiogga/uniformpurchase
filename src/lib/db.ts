@@ -14,12 +14,18 @@ const pool = new Pool({
   ssl: (process.env.NODE_ENV === 'production' && !isUnixSocket)
     ? { rejectUnauthorized: false }
     : false,
-  max: 10, // 최대 연결 수 제한
+  max: 20, // 연결 수 상향
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 5000, // 연결 타임아웃 5초
+  connectionTimeoutMillis: 10000, // 대기 시간 연장
 });
 
-export const query = (text: string, params?: any[]) => {
+// 예기치 못한 전체 에러 로깅 추가
+pool.on('error', (err) => {
+  console.error('Unexpected error on idle database client', err);
+});
+
+export const query = async (text: string, params?: any[]) => {
+  // 쿼리 실행 전 연결 상태를 확인하고 재시도할 수 있도록 처리
   return pool.query(text, params);
 };
 

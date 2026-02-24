@@ -87,15 +87,51 @@ export async function createUser(userData: any) {
 }
 
 /**
- * 사용자 활성화/비활성화 상태 변경
+ * 사용자 정보 수정
  */
-export async function updateUserStatus(userId: string, isActive: boolean) {
+export async function updateUser(userId: string, userData: any) {
     try {
-        await query('UPDATE users SET is_active = $1 WHERE id = $2', [isActive, userId]);
+        const sql = `
+            UPDATE users SET 
+                name = $1, 
+                rank = $2, 
+                unit = $3, 
+                military_number = $4,
+                promotion_date = $5,
+                retirement_date = $6,
+                is_active = $7
+            WHERE id = $8
+            RETURNING *
+        `;
+        const params = [
+            userData.name,
+            userData.rank,
+            userData.unit,
+            userData.military_number,
+            userData.promotion_date || null,
+            userData.retirement_date || null,
+            userData.is_active,
+            userId
+        ];
+        const result = await query(sql, params);
         revalidatePath('/admin/users');
-        return { success: true };
+        return { success: true, data: result.rows[0] };
     } catch (error) {
-        console.error('Failed to update user status:', error);
-        return { success: false, error: '상태 변경 중 오류가 발생했습니다.' };
+        console.error('Failed to update user:', error);
+        return { success: false, error: '사용자 정보 수정 중 오류가 발생했습니다.' };
     }
+}
+
+/**
+ * 군번으로 중복 체크
+ */
+export async function checkMilitaryNumber(militaryNumber: string, excludeId?: string) {
+    let sql = 'SELECT id FROM users WHERE military_number = $1';
+    const params = [militaryNumber];
+    if (excludeId) {
+        sql += ' AND id != $2';
+        params.push(excludeId);
+    }
+    const result = await query(sql, params);
+    return result.rows.length > 0;
 }

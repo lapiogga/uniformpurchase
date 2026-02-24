@@ -108,18 +108,21 @@ export async function createOnlineOrder(orderData: {
 }
 
 /**
- * 주문 상태 변경 및 후속 처리
- * @param orderId 주문 ID
- * @param newStatus 변경할 상태 (예: 'delivered', 'cancelled')
+ * 최근 주문 내역 조회 (판매소용)
  */
-export async function updateOrderStatus(orderId: string, newStatus: string) {
+export async function getRecentOrders(storeId: string, limit: number = 10) {
     try {
-        // 상태 전이에 따른 복합 로직 구현 필요 (배송완료 시 포인트 최종 차감 등)
-        await query('UPDATE orders SET status = $1, updated_at = NOW() WHERE id = $2', [newStatus, orderId]);
-        revalidatePath('/store/orders');
-        return { success: true };
+        const result = await query(`
+            SELECT o.*, u.name as user_name, u.rank, u.military_number
+            FROM orders o
+            JOIN users u ON o.user_id = u.id
+            WHERE o.store_id = $1
+            ORDER BY o.created_at DESC
+            LIMIT $2
+        `, [storeId, limit]);
+        return { success: true, data: result.rows };
     } catch (error) {
-        console.error('Status update failed:', error);
-        return { success: false, error: '상태 변경 중 오류가 발생했습니다.' };
+        console.error('Failed to fetch orders:', error);
+        return { success: false, error: '주문 내역을 불러오는 중 오류가 발생했습니다.' };
     }
 }

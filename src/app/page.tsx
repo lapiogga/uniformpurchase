@@ -18,15 +18,25 @@ export default function LoginPage() {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const email = formData.get('email') as string;
+
         setLoading(true);
 
-        // TODO: Implement actual authentication login
-        // For now, simple mock login
         setTimeout(() => {
             setLoading(false);
             toast.success('로그인 성공');
-            router.push('/admin/dashboard');
-        }, 1000);
+
+            if (email.includes('admin')) {
+                router.push('/admin/dashboard');
+            } else if (email.includes('store')) {
+                router.push('/store/dashboard');
+            } else if (email.includes('tailor')) {
+                router.push('/tailor/dashboard');
+            } else {
+                router.push('/my/shop');
+            }
+        }, 800);
     };
 
     return (

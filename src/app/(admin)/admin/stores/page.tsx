@@ -13,17 +13,39 @@ import Link from "next/link";
 export const dynamic = 'force-dynamic';
 
 export default async function AdminStoresPage() {
-    const result = await query("SELECT * FROM stores ORDER BY name ASC");
-    const stores = result.rows;
+    let stores: any[] = [];
+    let error: string | null = null;
+
+    try {
+        const result = await query("SELECT * FROM stores ORDER BY name ASC");
+        stores = Array.isArray(result?.rows) ? result.rows : [];
+    } catch (e: any) {
+        console.error('AdminStoresPage error:', e);
+        error = e.message || '데이터베이스 조회 중 오류가 발생했습니다.';
+    }
+
+    if (error) {
+        return (
+            <div className="p-6 bg-red-50 border border-red-200 rounded-md">
+                <h2 className="text-red-700 font-bold mb-2 flex items-center gap-2">
+                    <Store className="h-5 w-5" />
+                    판매소 정보를 불러올 수 없습니다
+                </h2>
+                <p className="text-red-600 text-sm">{error}</p>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold tracking-tight text-zinc-900">판매소 관리</h2>
-                <Button className="bg-[#1d4ed8]">
-                    <Plus className="mr-2 h-4 w-4" />
-                    판매소 등록
-                </Button>
+                <Link href="/admin/stores/new">
+                    <Button className="bg-[#1d4ed8]">
+                        <Plus className="mr-2 h-4 w-4" />
+                        판매소 등록
+                    </Button>
+                </Link>
             </div>
 
             <div className="grid gap-6">
@@ -36,17 +58,17 @@ export default async function AdminStoresPage() {
                         <Table>
                             <TableHeader className="bg-zinc-50">
                                 <TableRow>
-                                    <TableHead className="pl-6">판매소명</TableHead>
-                                    <TableHead>위치</TableHead>
-                                    <TableHead>연락처</TableHead>
-                                    <TableHead>관리자</TableHead>
-                                    <TableHead>상태</TableHead>
-                                    <TableHead className="text-right pr-6">관리</TableHead>
+                                    <TableHead className="pl-6 font-bold">판매소명</TableHead>
+                                    <TableHead className="font-bold">위치</TableHead>
+                                    <TableHead className="font-bold">연락처</TableHead>
+                                    <TableHead className="font-bold">담당자</TableHead>
+                                    <TableHead className="font-bold">상태</TableHead>
+                                    <TableHead className="text-right pr-6 font-bold">관리</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {stores.map((store) => (
-                                    <TableRow key={store.id}>
+                                    <TableRow key={store.id} className="hover:bg-zinc-50/50">
                                         <TableCell className="pl-6 font-bold flex items-center gap-2">
                                             <Store className="h-4 w-4 text-blue-600" />
                                             {store.name}
@@ -70,7 +92,7 @@ export default async function AdminStoresPage() {
                                             </Badge>
                                         </TableCell>
                                         <TableCell className="text-right pr-6">
-                                            <Button variant="ghost" size="sm">수정</Button>
+                                            <Button variant="ghost" size="sm" className="text-blue-600">수정</Button>
                                         </TableCell>
                                     </TableRow>
                                 ))}
