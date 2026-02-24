@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --primary: #1d4ed8;
+  --primary-foreground: #ffffff;
+  --secondary: #faf7f2;
+  --secondary-foreground: #1d4ed8;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
+  --accent: #f4f4f5;
+  --accent-foreground: #18181b;
+  --destructive: #ef4444;
+  --destructive-foreground: #fafafa;
+  --border: #e4e4e7;
+  --input: #e4e4e7;
+  --ring: #1d4ed8;
+  --radius: 0.25rem;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: Arial, "Noto Sans KR", sans-serif;
+}
+
+.auth-card {
+  @apply bg-white border border-zinc-200 rounded-[4px] shadow-sm;
+}

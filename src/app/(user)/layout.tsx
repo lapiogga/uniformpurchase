@@ -1,0 +1,20 @@
+import { Header } from '@/components/layout/Header';
+import { Sidebar } from '@/components/layout/Sidebar';
+
+export default function UserLayout({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
+    return (
+        <div className="flex min-h-screen flex-col">
+            <Header />
+            <div className="flex flex-1 overflow-hidden">
+                <Sidebar role="user" />
+                <main className="flex-1 overflow-y-auto bg-zinc-50 p-6">
+                    {children}
+                </main>
+            </div>
+        </div>
+    );
+}

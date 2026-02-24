@@ -1,0 +1,47 @@
+steps:
+  # 1. Install dependencies
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['install']
+
+  # 2. Run unit tests
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['test']
+
+  # 3. Build the Next.js application
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['run', 'build']
+    env:
+      - 'NEXT_PUBLIC_API_URL=$_API_URL'
+
+  # 4. Build and push Docker image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-t', '$_GCR_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/app:$SHORT_SHA',
+      '-t', '$_GCR_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/app:latest',
+      '.'
+    ]
+
+  # 5. Push to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', '--all-tags', '$_GCR_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/app']
+
+  # 6. Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: [
+      'run', 'deploy', '$_SERVICE_NAME',
+      '--image', '$_GCR_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/app:latest',
+      '--region', '$_GCR_REGION',
+      '--platform', 'managed',
+      '--allow-unauthenticated'
+    ]
+
+substitutions:
+  _GCR_REGION: 'asia-northeast3'
+  _REPO_NAME: 'uniform-purchase'
+  _SERVICE_NAME: 'uniform-app'
+  _API_URL: 'https://api.example.com'
+
+images:
+  - '$_GCR_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/app:latest'
