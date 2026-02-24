@@ -14,6 +14,9 @@ const pool = new Pool({
   ssl: (process.env.NODE_ENV === 'production' && !isUnixSocket)
     ? { rejectUnauthorized: false }
     : false,
+  max: 10, // 최대 연결 수 제한
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 5000, // 연결 타임아웃 5초
 });
 
 export const query = (text: string, params?: any[]) => {

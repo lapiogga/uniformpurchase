@@ -17,23 +17,44 @@ export default async function UserPointsPage() {
     // Mock current user ID
     const userId = "00000000-0000-0000-0000-000000000002";
 
-    const summaryResult = await getPointSummary(userId);
-    const ledgerResult = await query(`
-    SELECT * FROM point_ledger 
-    WHERE user_id = $1 
-    ORDER BY created_at DESC 
-    LIMIT 20
-  `, [userId]);
+    let summary: any = null;
+    let ledgerEntries: any[] = [];
+    let error: string | null = null;
 
-    const summary = summaryResult.success ? summaryResult.data : null;
-    const ledgerEntries = ledgerResult.rows;
+    try {
+        const summaryResult = await getPointSummary(userId);
+        const ledgerResult = await query(`
+            SELECT * FROM point_ledger 
+            WHERE user_id = $1 
+            ORDER BY created_at DESC 
+            LIMIT 20
+        `, [userId]);
+
+        summary = summaryResult.success ? summaryResult.data : null;
+        ledgerEntries = Array.isArray(ledgerResult?.rows) ? ledgerResult.rows : [];
+    } catch (e: any) {
+        console.error('UserPointsPage data fetch error:', e);
+        error = e.message || '데이터를 불러오는 중 오류가 발생했습니다.';
+    }
 
     const currentStatus = summary ? {
-        available: summary.total_granted - summary.used_points - summary.reserved_points,
-        used: summary.used_points,
-        reserved: summary.reserved_points,
-        total: summary.total_granted
+        available: Number(summary.total_granted || 0) - Number(summary.used_points || 0) - Number(summary.reserved_points || 0),
+        used: Number(summary.used_points || 0),
+        reserved: Number(summary.reserved_points || 0),
+        total: Number(summary.total_granted || 0)
     } : { available: 0, used: 0, reserved: 0, total: 0 };
+
+    if (error) {
+        return (
+            <div className="p-6 bg-red-50 border border-red-200 rounded-md">
+                <h2 className="text-red-700 font-bold mb-2 flex items-center gap-2">
+                    <CreditCard className="h-5 w-5" />
+                    포인트 정보를 불러올 수 없습니다
+                </h2>
+                <p className="text-red-600 text-sm">{error}</p>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">

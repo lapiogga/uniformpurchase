@@ -12,31 +12,69 @@ export const dynamic = 'force-dynamic';
 export default async function PointsPage() {
     const currentYear = new Date().getFullYear();
 
-    // Get point status summary
-    const summaryResult = await query(`
-    SELECT 
-      COUNT(*) as total_users,
-      SUM(total_granted) as total_granted,
-      SUM(used_points) as total_used,
-      SUM(reserved_points) as total_reserved
-    FROM point_summary
-  `);
-    const summary = summaryResult?.rows?.[0] || {};
+    let summary = {
+        total_users: 0,
+        total_granted: 0,
+        total_used: 0,
+        total_reserved: 0
+    };
+    let recentLogs: any[] = [];
+    let error: string | null = null;
 
-    // Get recent ledger entries
-    const ledgerResult = await query(`
-    SELECT pl.*, u.name, u.rank, u.military_number
-    FROM point_ledger pl
-    JOIN users u ON pl.user_id = u.id
-    ORDER BY pl.created_at DESC
-    LIMIT 10
-  `);
-    const recentLogs = Array.isArray(ledgerResult?.rows) ? ledgerResult.rows : [];
+    try {
+        // Get point status summary
+        const summaryResult = await query(`
+            SELECT 
+                COUNT(*) as total_users,
+                SUM(total_granted) as total_granted,
+                SUM(used_points) as total_used,
+                SUM(reserved_points) as total_reserved
+            FROM point_summary
+        `);
+
+        if (summaryResult?.rows?.[0]) {
+            const row = summaryResult.rows[0];
+            summary = {
+                total_users: Number(row.total_users || 0),
+                total_granted: Number(row.total_granted || 0),
+                total_used: Number(row.total_used || 0),
+                total_reserved: Number(row.total_reserved || 0)
+            };
+        }
+
+        // Get recent ledger entries
+        const ledgerResult = await query(`
+            SELECT pl.*, u.name, u.rank, u.military_number
+            FROM point_ledger pl
+            JOIN users u ON pl.user_id = u.id
+            ORDER BY pl.created_at DESC
+            LIMIT 10
+        `);
+        recentLogs = Array.isArray(ledgerResult?.rows) ? ledgerResult.rows : [];
+    } catch (e: any) {
+        console.error('PointsPage data fetch error:', e);
+        error = e.message || '데이터베이스 조회 중 오류가 발생했습니다.';
+    }
+
+    if (error) {
+        return (
+            <div className="p-6 bg-red-50 border border-red-200 rounded-md">
+                <h2 className="text-red-700 font-bold mb-2 flex items-center gap-2">
+                    <AlertCircle className="h-5 w-5" />
+                    데이터를 불러올 수 없습니다
+                </h2>
+                <p className="text-red-600 text-sm">{error}</p>
+                <p className="text-red-500 text-xs mt-2">
+                    Tip: 데이터베이스에 `point_summary` 및 `point_ledger` 테이블이 있는지 확인해 주세요.
+                </p>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold tracking-tight text-zinc-900">포인드 관리</h2>
+                <h2 className="text-2xl font-bold tracking-tight text-zinc-900">포인트 관리</h2>
                 <div className="flex gap-2">
                     <Button variant="outline">산정 미리보기</Button>
                     <Link href={"/tailor/tickets/register" as any}>
