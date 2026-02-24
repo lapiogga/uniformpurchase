@@ -28,8 +28,8 @@ export default async function InventoryPage({
         getCategories(),
     ]);
 
-    const inventory = inventoryResult.success ? inventoryResult.data : [];
-    const categories = categoriesResult.success ? categoriesResult.data : [];
+    const inventory = Array.isArray(inventoryResult?.data) ? inventoryResult.data : [];
+    const categories = Array.isArray(categoriesResult?.data) ? categoriesResult.data : [];
 
     return (
         <div className="space-y-6">
@@ -55,7 +55,7 @@ export default async function InventoryPage({
                     defaultValue={params.category || ""}
                 >
                     <option value="">전체 카테고리</option>
-                    {categories.map((cat: any) => (
+                    {Array.isArray(categories) && categories.map((cat: any) => (
                         <option key={cat.id} value={cat.id}>{cat.name}</option>
                     ))}
                 </select>
@@ -96,7 +96,7 @@ export default async function InventoryPage({
                                         </span>
                                     </TableCell>
                                     <TableCell>
-                                        <Badge variant="outline">
+                                        <Badge variant="outline" className="font-normal">
                                             {item.product_type === 'finished' ? '완제품' : '맞춤'}
                                         </Badge>
                                     </TableCell>

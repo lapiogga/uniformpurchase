@@ -1,0 +1,19 @@
+
+> uniform-purchase-system@1.0.0 build
+> next build
+
+   ??Next.js 15.1.0
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ??Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/15) ...
+Error occurred prerendering page "/admin/stores". Read more: https://nextjs.org/docs/messages/prerender-error
+Error: The server does not support SSL connections
+    at C:\G_Study_1\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async p (C:\G_Study_1\.next\server\app\(admin)\admin\stores\page.js:1:7590)
+Export encountered an error on /(admin)/admin/stores/page: /admin/stores, exiting the build.
+ 殊?Static worker exited with code: 1 and signal: null

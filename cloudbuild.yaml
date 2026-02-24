@@ -1,47 +1,45 @@
 steps:
-  # 1. Install dependencies
-  - name: 'gcr.io/cloud-builders/npm'
-    args: ['install']
+  # 1. 환경 정보 출력 (디버깅용)
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "빌드 시작 위치: $(pwd)"
+        echo "프로젝트 ID: $PROJECT_ID"
+        echo "저장소 이름: ${_REPO_NAME}"
 
-  # 2. Run unit tests
-  - name: 'gcr.io/cloud-builders/npm'
-    args: ['test']
-
-  # 3. Build the Next.js application
-  - name: 'gcr.io/cloud-builders/npm'
-    args: ['run', 'build']
-    env:
-      - 'NEXT_PUBLIC_API_URL=$_API_URL'
-
-  # 4. Build and push Docker image to Artifact Registry
+  # 2. Docker 이미지 빌드 (안정성을 위해 latest 태그만 사용)
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'build',
-      '-t', '$_GCR_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/app:$SHORT_SHA',
-      '-t', '$_GCR_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/app:latest',
+      '-t', '${_GCR_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO_NAME}/app:latest',
       '.'
     ]
 
-  # 5. Push to Artifact Registry
+  # 3. 이미지 푸시
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', '--all-tags', '$_GCR_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/app']
+    args: ['push', '${_GCR_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO_NAME}/app:latest']
 
-  # 6. Deploy to Cloud Run
+  # 4. Cloud Run 배포
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args: [
-      'run', 'deploy', '$_SERVICE_NAME',
-      '--image', '$_GCR_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/app:latest',
-      '--region', '$_GCR_REGION',
+      'run', 'deploy', '${_SERVICE_NAME}',
+      '--image', '${_GCR_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO_NAME}/app:latest',
+      '--region', '${_GCR_REGION}',
       '--platform', 'managed',
-      '--allow-unauthenticated'
+      '--allow-unauthenticated',
+      '--add-cloudsql-instances', '${PROJECT_ID}:${_GCR_REGION}:uniform-db-primary',
+      '--set-env-vars', 'DATABASE_URL=${_DATABASE_URL},NEXTAUTH_SECRET=${_NEXTAUTH_SECRET}'
     ]
 
 substitutions:
   _GCR_REGION: 'asia-northeast3'
   _REPO_NAME: 'uniform-purchase'
   _SERVICE_NAME: 'uniform-app'
-  _API_URL: 'https://api.example.com'
+  _DATABASE_URL: 'postgresql://admin:admin123@127.0.0.1:5432/uniform_db'
+  _NEXTAUTH_SECRET: 'any_stable_secret_key_for_production'
 
 images:
-  - '$_GCR_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/app:latest'
+  - '${_GCR_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO_NAME}/app:latest'

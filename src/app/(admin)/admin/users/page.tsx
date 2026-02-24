@@ -52,7 +52,7 @@ export default async function UserListPage({
                         defaultValue={params.search}
                     />
                 </div>
-                <Button variant="outline">검색</Button>
+                <Button variant={"outline" as any}>검색</Button>
             </div>
 
             <div className="bg-white rounded-[4px] border border-zinc-200 shadow-sm overflow-hidden">
@@ -69,9 +69,9 @@ export default async function UserListPage({
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {users.length === 0 ? (
+                        {(!Array.isArray(users) || users.length === 0) ? (
                             <TableRow>
-                                <TableCell colSpan={7} className="h-24 text-center text-zinc-500">
+                                <TableCell colSpan={8} className="h-24 text-center text-zinc-500">
                                     등록된 사용자가 없습니다.
                                 </TableCell>
                             </TableRow>
@@ -81,19 +81,23 @@ export default async function UserListPage({
                                     <TableCell className="font-mono text-xs">{user.military_number}</TableCell>
                                     <TableCell className="font-medium">{user.name}</TableCell>
                                     <TableCell>
-                                        <Badge variant="outline" className="font-normal">
+                                        <Badge variant={"outline" as any}>
                                             {roleLabels[user.role] || user.role}
                                         </Badge>
                                     </TableCell>
                                     <TableCell>{user.rank || "-"}</TableCell>
                                     <TableCell className="text-zinc-600">{user.unit || "-"}</TableCell>
                                     <TableCell>
-                                        <Badge variant={user.is_active ? "success" : "secondary"}>
+                                        <Badge variant={(user.is_active ? "success" : "secondary") as any}>
                                             {user.is_active ? "활성" : "비활성"}
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-right text-zinc-500 text-xs">
                                         {new Date(user.created_at).toLocaleDateString()}
+                                    </TableCell>
+                                    <TableCell className="text-right space-x-2">
+                                        <Button variant={"outline" as any} size={"sm" as any}>조정</Button>
+                                        <Button variant={"ghost" as any} size={"sm" as any}>수정</Button>
                                     </TableCell>
                                 </TableRow>
                             ))

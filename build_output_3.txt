@@ -1,0 +1,24 @@
+
+> uniform-purchase-system@1.0.0 build
+> next build
+
+   ??Next.js 15.1.0
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ??Compiled successfully
+   Linting and checking validity of types ...
+
+./src/app/(user)/my/shop/page.tsx
+82:37  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+   Collecting page data ...
+   Generating static pages (0/19) ...
+Error occurred prerendering page "/admin/points". Read more: https://nextjs.org/docs/messages/prerender-error
+Error: The server does not support SSL connections
+    at C:\G_Study_1\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async y (C:\G_Study_1\.next\server\app\(admin)\admin\points\page.js:8:1124)
+Export encountered an error on /(admin)/admin/points/page: /admin/points, exiting the build.
+ 殊?Static worker exited with code: 1 and signal: null

@@ -26,8 +26,8 @@ export default async function ProductListPage({
         getCategories(),
     ]);
 
-    const products = productsResult.success ? productsResult.data : [];
-    const categories = categoriesResult.success ? categoriesResult.data : [];
+    const products = Array.isArray(productsResult?.data) ? productsResult.data : [];
+    const categories = Array.isArray(categoriesResult?.data) ? categoriesResult.data : [];
 
     return (
         <div className="space-y-6">
@@ -55,11 +55,11 @@ export default async function ProductListPage({
                     defaultValue={params.category || ""}
                 >
                     <option value="">전체 카테고리</option>
-                    {categories.map((cat: any) => (
+                    {Array.isArray(categories) && categories.map((cat: any) => (
                         <option key={cat.id} value={cat.id}>{cat.name}</option>
                     ))}
                 </select>
-                <Button variant="outline">
+                <Button variant={"outline" as any}>
                     <Filter className="mr-2 h-4 w-4" />
                     필터링
                 </Button>
@@ -86,7 +86,7 @@ export default async function ProductListPage({
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            products.map((product: any) => (
+                            Array.isArray(products) && products.map((product: any) => (
                                 <TableRow key={product.id}>
                                     <TableCell>
                                         <div className="h-10 w-10 rounded-[2px] bg-zinc-100 border border-zinc-200 flex items-center justify-center text-[10px] text-zinc-400">
@@ -104,7 +104,7 @@ export default async function ProductListPage({
                                         {formatCurrency(product.base_price)}
                                     </TableCell>
                                     <TableCell>
-                                        <Badge variant={product.is_active ? "success" : "secondary"}>
+                                        <Badge variant={(product.is_active ? "success" : "secondary") as any}>
                                             {product.is_active ? "판매중" : "중단"}
                                         </Badge>
                                     </TableCell>

@@ -41,6 +41,10 @@
     "**/*.tsx"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "backups_legacy",
+    "server.ts",
+    "vite.config.ts",
+    "vitest.config.ts"
   ]
 }

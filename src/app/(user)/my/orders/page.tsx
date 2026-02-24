@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
 import { ShoppingCart } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 export default async function MyOrdersPage() {
     // Mock current user ID
     const userId = "00000000-0000-0000-0000-000000000002";

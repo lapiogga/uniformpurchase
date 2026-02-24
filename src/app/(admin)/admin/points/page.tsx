@@ -3,8 +3,11 @@ import { query } from "@/lib/db";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Coins, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Coins, AlertCircle, CheckCircle2, Search } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
+import Link from "next/link";
+
+export const dynamic = 'force-dynamic';
 
 export default async function PointsPage() {
     const currentYear = new Date().getFullYear();
@@ -18,7 +21,7 @@ export default async function PointsPage() {
       SUM(reserved_points) as total_reserved
     FROM point_summary
   `);
-    const summary = summaryResult.rows[0];
+    const summary = summaryResult?.rows?.[0] || {};
 
     // Get recent ledger entries
     const ledgerResult = await query(`
@@ -28,7 +31,7 @@ export default async function PointsPage() {
     ORDER BY pl.created_at DESC
     LIMIT 10
   `);
-    const recentLogs = ledgerResult.rows;
+    const recentLogs = Array.isArray(ledgerResult?.rows) ? ledgerResult.rows : [];
 
     return (
         <div className="space-y-6">
@@ -36,6 +39,12 @@ export default async function PointsPage() {
                 <h2 className="text-2xl font-bold tracking-tight text-zinc-900">포인드 관리</h2>
                 <div className="flex gap-2">
                     <Button variant="outline">산정 미리보기</Button>
+                    <Link href={"/tailor/tickets/register" as any}>
+                        <Button variant={"outline" as any} className="gap-1.5 text-zinc-900 border-zinc-300">
+                            <Search className="h-4 w-4" />
+                            체척권 간편 등록
+                        </Button>
+                    </Link>
                     <form action={async () => {
                         'use server';
                         await grantAnnualPoints(new Date().getFullYear());
@@ -97,7 +106,7 @@ export default async function PointsPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {recentLogs.length === 0 ? (
+                            {(!Array.isArray(recentLogs) || recentLogs.length === 0) ? (
                                 <TableRow>
                                     <TableCell colSpan={5} className="h-24 text-center text-zinc-500">
                                         변동 이력이 없습니다.

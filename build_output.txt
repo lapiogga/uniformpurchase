@@ -1,0 +1,27 @@
+
+> uniform-purchase-system@1.0.0 build
+> next build
+
+   ??Next.js 15.1.0
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ??Compiled successfully
+   Linting and checking validity of types ...
+
+./src/app/(user)/my/shop/page.tsx
+82:37  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+Failed to compile.
+
+./src/app/(tailor)/tailor/dashboard/page.tsx:24:32
+Type error: 'tickets' is possibly 'undefined'.
+
+  22 |
+  23 |     // ?듦퀎 怨꾩궛 (媛?? 泥댁쿃???쇱젙 ?섏닔猷?諛쒖깮)
+> 24 |     const settlementEstimate = tickets.length * 25000; // 嫄대떦 25,000???뺤궛 媛??[39m
+     |                                ^
+  25 |
+  26 |     const stats = [
+  27 |         { title: "?깅줉 泥댁쿃沅?, value: `${tickets.length}嫄?, sub: "?꾩껜 ?꾩쟻", icon: CheckCircle, color: "text-green-600" },

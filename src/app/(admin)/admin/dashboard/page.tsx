@@ -1,7 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, CreditCard, ShoppingBag, Ruler } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
 
-export default function AdminDashboard() {
+export const dynamic = 'force-dynamic';
+
+export default async function AdminDashboard() {
     const stats = [
         { title: "전체 사용자", value: "1,240명", icon: Users, color: "text-blue-600" },
         { title: "이번 달 지급 포인트", value: "4,500,000 P", icon: CreditCard, color: "text-green-600" },

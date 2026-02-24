@@ -1,0 +1,46 @@
+
+> uniform-purchase-system@1.0.0 build
+> next build
+
+   ??Next.js 15.1.0
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ??Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/10) ...
+   Generating static pages (2/10) 
+   Generating static pages (4/10) 
+   Generating static pages (7/10) 
+ ??Generating static pages (10/10)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+????/                                    3.54 kB         125 kB
+????/_not-found                          979 B           106 kB
+??? /admin/dashboard                     155 B           106 kB
+??? /admin/points                        184 B           109 kB
+??? /admin/products                      184 B           109 kB
+??? /admin/stores                        155 B           106 kB
+??? /admin/users                         184 B           109 kB
+????/my/cart                             155 B           106 kB
+??? /my/orders                           155 B           106 kB
+??? /my/points                           155 B           106 kB
+??? /my/shop                             5.49 kB         111 kB
+??? /store/dashboard                     184 B           109 kB
+??? /store/inventory                     155 B           106 kB
+??? /store/orders                        155 B           106 kB
+??? /tailor/dashboard                    184 B           109 kB
+??? /tailor/tickets                      155 B           106 kB
+????/tailor/tickets/register             4.72 kB         126 kB
++ First Load JS shared by all            105 kB
+  ??chunks/4bd1b696-7f7f6b6c66d024fc.js  52.9 kB
+  ??chunks/517-66912dd2113007f8.js       50.5 kB
+  ??other shared chunks (total)          1.98 kB
+
+
+?? (Static)   prerendered as static content
+?  (Dynamic)  server-rendered on demand
+
