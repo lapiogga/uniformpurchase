@@ -1,0 +1,18 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: uniform-system-db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: uniform_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+      - ./C:/Users/User/.gemini/antigravity/brain/11af29b6-e6bf-4091-8a21-93f4543fc524/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+      - ./C:/Users/User/.gemini/antigravity/brain/11af29b6-e6bf-4091-8a21-93f4543fc524/seed.sql:/docker-entrypoint-initdb.d/2-seed.sql
+
+volumes:
+  db-data:
