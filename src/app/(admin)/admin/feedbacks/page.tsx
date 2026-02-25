@@ -21,7 +21,7 @@ export default function FeedbacksPage() {
         setLoading(true);
         const res = await getFeedbacks();
         if (res.success) {
-            setFeedbacks(res.data);
+            setFeedbacks(res.data || []);
         }
         setLoading(false);
     };

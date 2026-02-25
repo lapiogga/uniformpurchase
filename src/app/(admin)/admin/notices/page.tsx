@@ -25,7 +25,7 @@ export default function NoticeManagementPage() {
         setLoading(true);
         const res = await getNotices();
         if (res.success) {
-            setNotices(res.data);
+            setNotices(res.data || []);
         }
         setLoading(false);
     };
