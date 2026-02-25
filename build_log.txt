@@ -1,0 +1,30 @@
+
+> uniform-purchase-system@1.0.0 build
+> next build
+
+   ??Next.js 15.1.0
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ??Compiled successfully
+   Linting and checking validity of types ...
+
+./src/app/(admin)/admin/products/page.tsx
+99:49  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/forms/ProductSpecModal.tsx
+32:8  Warning: React Hook useEffect has a missing dependency: 'loadSpecs'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+Failed to compile.
+
+./src/app/shop/page.tsx:131:34
+Type error: 'recentOrders' is possibly 'undefined'.
+
+  129 |                                     <h3 className="text-xl font-black tracking-widest text-[#444] uppercase">理쒓렐 ?쒕룞</h3>
+  130 |                                 </header>
+> 131 |                                 {recentOrders.length > 0 ? (
+      |                                  ^
+  132 |                                     <ul className="divided space-y-8">
+  133 |                                         {recentOrders.map((order: any) => (
+  134 |                                             <li key={order.id} className="group">

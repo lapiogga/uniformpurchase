@@ -1,0 +1,73 @@
+
+> uniform-purchase-system@1.0.0 build
+> next build
+
+   ??Next.js 15.1.0
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ??Compiled successfully
+   Linting and checking validity of types ...
+
+./src/app/(admin)/admin/products/page.tsx
+99:49  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/forms/ProductSpecModal.tsx
+32:8  Warning: React Hook useEffect has a missing dependency: 'loadSpecs'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+   Collecting page data ...
+   Generating static pages (0/18) ...
+   Generating static pages (4/18) 
+   Generating static pages (8/18) 
+   Generating static pages (13/18) 
+ ??Generating static pages (18/18)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+????/                                    6.66 kB         147 kB
+????/_not-found                          983 B           106 kB
+??? /admin/categories                    167 B           106 kB
+??? /admin/dashboard                     167 B           106 kB
+????/admin/feedbacks                     2.44 kB         130 kB
+????/admin/notices                       2.88 kB         131 kB
+??? /admin/points                        3.82 kB         129 kB
+????/admin/points/promotion              4.59 kB         126 kB
+??? /admin/products                      185 B           109 kB
+??? /admin/products/edit/[id]            143 B           129 kB
+????/admin/products/new                  143 B           129 kB
+??? /admin/settlements                   167 B           106 kB
+??? /admin/stores                        185 B           109 kB
+????/admin/stores/new                    3.73 kB         125 kB
+??? /admin/tailors                       167 B           106 kB
+????/admin/tailors/new                   3.69 kB         125 kB
+??? /admin/tickets/cancellations         167 B           106 kB
+??? /admin/users                         185 B           109 kB
+??? /admin/users/[id]/edit               142 B           126 kB
+????/admin/users/new                     142 B           126 kB
+????/my/cart                             167 B           106 kB
+??? /my/orders                           167 B           106 kB
+??? /my/points                           167 B           106 kB
+????/my/profile/password                 4.8 kB          126 kB
+??? /my/shop                             199 B           144 kB
+??? /shop                                2.43 kB         147 kB
+??? /store/dashboard                     185 B           109 kB
+??? /store/delivery                      5.85 kB         127 kB
+??? /store/inventory                     7.77 kB         129 kB
+??? /store/orders                        167 B           106 kB
+??? /store/sales                         5.26 kB         127 kB
+????/store/sales/new                     6.79 kB         128 kB
+??? /tailor/dashboard                    3.55 kB         129 kB
+??? /tailor/tickets                      167 B           106 kB
+????/tailor/tickets/register             5.17 kB         127 kB
+????/tips                                6.2 kB          118 kB
++ First Load JS shared by all            105 kB
+  ??chunks/1517-17ce1c49171f3884.js      50.5 kB
+  ??chunks/4bd1b696-b89c8a818dca523f.js  52.9 kB
+  ??other shared chunks (total)          2.02 kB
+
+
+?? (Static)   prerendered as static content
+?  (Dynamic)  server-rendered on demand
+

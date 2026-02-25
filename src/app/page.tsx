@@ -50,7 +50,7 @@ export default function LandingPage() {
         const fetchNotices = async () => {
             const { getNotices } = await import('@/actions/notices');
             const res = await getNotices(3);
-            if (res.success) setNotices(res.data);
+            if (res.success) setNotices(res.data || []);
         };
         fetchNotices();
         console.log("Starting Slideshow Interval");

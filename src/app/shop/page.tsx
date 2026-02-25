@@ -56,8 +56,8 @@ export default async function ShoppingMallPage({
     const pointSummary = pointsResult?.success ? pointsResult.data : null;
     const availablePoints = pointSummary ? (Number(pointSummary.total_granted || 0) - Number(pointSummary.used_points || 0) - Number(pointSummary.reserved_points || 0)) : 0;
 
-    const recentOrders = ordersResult?.success ? ordersResult.data : [];
-    const recentNotices = noticesResult?.success ? noticesResult.data : [];
+    const recentOrders = (ordersResult?.success && ordersResult.data) ? ordersResult.data : [];
+    const recentNotices = (noticesResult?.success && noticesResult.data) ? noticesResult.data : [];
 
     return (
         <div id="page-wrapper" className="homepage bg-[#f0f0f0]">
