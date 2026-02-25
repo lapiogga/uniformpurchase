@@ -11,7 +11,7 @@ export async function getTicketByNumber(ticketNumber: string) {
     try {
         // 체척권 정보와 함께 사용자명, 주문 항목 정보, 품목명을 조인하여 조회
         const result = await query(`
-      SELECT t.*, u.name as user_name, ui.unit_price, p.name as product_name
+      SELECT t.*, u.name as user_name, u.military_number, u.rank, ui.unit_price, p.name as product_name
       FROM tailoring_tickets t
       JOIN users u ON t.user_id = u.id
       JOIN order_items ui ON t.order_item_id = ui.id
@@ -66,7 +66,7 @@ export async function registerTicket(ticketId: string, tailorId: string) {
 export async function getTailorTickets(tailorId: string) {
     try {
         const result = await query(`
-      SELECT t.*, u.name as user_name, p.name as product_name
+      SELECT t.*, u.name as user_name, u.military_number, u.rank, p.name as product_name
       FROM tailoring_tickets t
       JOIN users u ON t.user_id = u.id
       JOIN order_items ui ON t.order_item_id = ui.id

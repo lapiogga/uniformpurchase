@@ -64,6 +64,20 @@ export async function getProducts(filters?: { categoryId?: string; productType?:
 }
 
 /**
+ * 특정 품목 상세 정보 조회
+ */
+export async function getProductById(productId: string) {
+    try {
+        const result = await query('SELECT * FROM products WHERE id = $1', [productId]);
+        if (result.rows.length === 0) return { success: false, error: '품목을 찾을 수 없습니다.' };
+        return { success: true, data: result.rows[0] };
+    } catch (error) {
+        console.error('Failed to fetch product:', error);
+        return { success: false, error: '품목 정보를 불러오는 중 오류가 발생했습니다.' };
+    }
+}
+
+/**
  * 특정 품목의 사용 가능한 규격(사이즈 등) 목록 조회
  */
 export async function getProductSpecs(productId: string) {
@@ -131,5 +145,49 @@ export async function upsertProduct(productData: any) {
     } catch (error) {
         console.error('Failed to upsert product:', error);
         return { success: false, error: '품목 저장 중 오류가 발생했습니다.' };
+    }
+}
+/**
+ * 규격 추가
+ */
+export async function addProductSpec(productId: string, specName: string, sortOrder: number = 0) {
+    try {
+        const result = await query(
+            'INSERT INTO product_specs (product_id, spec_name, sort_order) VALUES ($1, $2, $3) RETURNING *',
+            [productId, specName, sortOrder]
+        );
+        return { success: true, data: result.rows[0] };
+    } catch (error) {
+        console.error('Failed to add spec:', error);
+        return { success: false, error: '규격 추가 중 오류가 발생했습니다.' };
+    }
+}
+
+/**
+ * 규격 수정
+ */
+export async function updateProductSpec(specId: string, specName: string, sortOrder: number) {
+    try {
+        const result = await query(
+            'UPDATE product_specs SET spec_name = $1, sort_order = $2, updated_at = NOW() WHERE id = $3 RETURNING *',
+            [specName, sortOrder, specId]
+        );
+        return { success: true, data: result.rows[0] };
+    } catch (error) {
+        console.error('Failed to update spec:', error);
+        return { success: false, error: '규격 수정 중 오류가 발생했습니다.' };
+    }
+}
+
+/**
+ * 규격 삭제 (비활성화)
+ */
+export async function deleteProductSpec(specId: string) {
+    try {
+        await query('UPDATE product_specs SET is_active = false WHERE id = $1', [specId]);
+        return { success: true };
+    } catch (error) {
+        console.error('Failed to delete spec:', error);
+        return { success: false, error: '규격 삭제 중 오류가 발생했습니다.' };
     }
 }

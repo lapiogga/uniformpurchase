@@ -19,16 +19,18 @@ export const navItems: NavItem[] = [
 
     // Store Items
     { title: "판매소 대시보드", href: "/store/dashboard", roles: ["store"] },
-    { title: "판매 현황 대시보드", href: "/store/sales", roles: ["store"] },
     { title: "오프라인 판매", href: "/store/sales/new", roles: ["store"] },
-    { title: "배송 관리", href: "/store/orders", roles: ["store"] },
+    { title: "판매 현황 목록", href: "/store/sales", roles: ["store"] },
     { title: "재고 현황", href: "/store/inventory", roles: ["store"] },
+    { title: "배송 관리", href: "/store/orders", roles: ["store"] },
+    { title: "배송지 관리", href: "/store/delivery", roles: ["store"] },
 
     // User Items
     { title: "쇼핑몰", href: "/my/shop", roles: ["user"] },
     { title: "장바구니", href: "/my/cart", roles: ["user"] },
     { title: "주문 내역", href: "/my/orders", roles: ["user"] },
     { title: "포인트 정보", href: "/my/points", roles: ["user"] },
+    { title: "비밀번호 변경", href: "/my/profile/password", roles: ["user", "admin", "store", "tailor"] },
 
     // Tailor Items
     { title: "업체 대시보드", href: "/tailor/dashboard", roles: ["tailor"] },

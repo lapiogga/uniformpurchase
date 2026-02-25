@@ -135,3 +135,73 @@ export async function checkMilitaryNumber(militaryNumber: string, excludeId?: st
     const result = await query(sql, params);
     return result.rows.length > 0;
 }
+import { cookies } from 'next/headers';
+
+/**
+ * 로그인 처리 (이메일/비밀번호 확인 + 세션 쿠키 설정)
+ */
+export async function login(email: string, password: string) {
+    try {
+        const result = await query(
+            'SELECT id, email, role, name, military_number, rank, unit, store_id, tailor_id FROM users WHERE LOWER(email) = LOWER($1) AND password = $2 AND is_active = true',
+            [email, password]
+        );
+
+        if (result.rows.length === 0) {
+            return { success: false, error: '이메일 또는 비밀번호가 일치하지 않습니다.' };
+        }
+
+        const user = result.rows[0];
+
+        // 서버사이드 쿠키 설정 (7일 유지)
+        const cookieStore = await cookies();
+        cookieStore.set('user_session', JSON.stringify(user), {
+            maxAge: 60 * 60 * 24 * 7,
+            path: '/',
+            httpOnly: false, // 클라이언트에서도 읽을 수 있게 (현재 UI 구조 반영)
+            secure: process.env.NODE_ENV === 'production',
+        });
+
+        return { success: true, data: user };
+    } catch (error) {
+        console.error('Login error:', error);
+        return { success: false, error: '로그인 중 오류가 발생했습니다.' };
+    }
+}
+
+/**
+ * 로그아웃 처리
+ */
+export async function logout() {
+    const cookieStore = await cookies();
+    cookieStore.delete('user_session');
+    return { success: true };
+}
+
+/**
+ * 비밀번호 변경
+ */
+export async function changePassword(userId: string, currentPw: string, newPw: string) {
+    try {
+        // 1. 현재 비밀번호 확인
+        const checkResult = await query(
+            'SELECT id FROM users WHERE id = $1 AND password = $2',
+            [userId, currentPw]
+        );
+
+        if (checkResult.rows.length === 0) {
+            return { success: false, error: '현재 비밀번호가 일치하지 않습니다.' };
+        }
+
+        // 2. 새 비밀번호로 수정
+        await query(
+            'UPDATE users SET password = $1, updated_at = NOW() WHERE id = $2',
+            [newPw, userId]
+        );
+
+        return { success: true };
+    } catch (error) {
+        console.error('Password change error:', error);
+        return { success: false, error: '비밀번호 변경 중 오류가 발생했습니다.' };
+    }
+}

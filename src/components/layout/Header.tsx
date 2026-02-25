@@ -1,14 +1,27 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { LogOut, User as UserIcon } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
 import { toast } from 'sonner';
+import { getRankLabel } from '@/lib/utils';
+import { logout } from '@/actions/users';
 
 export function Header() {
     const router = useRouter();
     const pathname = usePathname();
+    const [user, setUser] = useState<any>(null);
 
-    const handleLogout = () => {
+    useEffect(() => {
+        const session = localStorage.getItem('user_session');
+        if (session) {
+            setUser(JSON.parse(session));
+        }
+    }, []);
+
+    const handleLogout = async () => {
+        await logout();
+        localStorage.removeItem('user_session');
         toast.success('로그아웃되었습니다.');
         router.push('/');
     };
@@ -18,6 +31,12 @@ export function Header() {
         if (pathname.startsWith('/store')) return '판매소';
         if (pathname.startsWith('/tailor')) return '체척업체';
         return '사용자';
+    };
+
+    const getUserName = () => {
+        if (!user) return '로딩 중...';
+        const rankLabel = user.rank ? getRankLabel(user.rank) : '';
+        return `${rankLabel} ${user.name} 님`.trim();
     };
 
     return (
@@ -31,7 +50,7 @@ export function Header() {
             <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2 text-sm font-medium text-zinc-700">
                     <UserIcon className="h-4 w-4" />
-                    <span className="hidden sm:inline">홍길동 님</span>
+                    <span className="hidden sm:inline">{getUserName()}</span>
                 </div>
                 <button
                     onClick={handleLogout}

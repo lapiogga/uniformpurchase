@@ -119,8 +119,17 @@ export default async function AdminProductsPage({
                                             {product.is_active ? "판매중" : "중단"}
                                         </Badge>
                                     </TableCell>
-                                    <TableCell className="text-right text-zinc-400 text-xs">
-                                        {new Date(product.created_at).toLocaleDateString()}
+                                    <TableCell className="text-right pr-6">
+                                        <div className="flex justify-end gap-2">
+                                            <Link href={`/admin/products/edit/${product.id}`}>
+                                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                                    <Edit className="h-4 w-4" />
+                                                </Button>
+                                            </Link>
+                                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-500">
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </div>
                                     </TableCell>
                                 </TableRow>
                             ))

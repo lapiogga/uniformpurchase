@@ -23,6 +23,13 @@ const rankOptions = [
     { value: 'civil_servant', label: '군무원' },
 ];
 
+const roleOptions = [
+    { value: 'user', label: '일반사용자' },
+    { value: 'admin', label: '군수담당자' },
+    { value: 'store', label: '피복판매소' },
+    { value: 'tailor', label: '체척업체' },
+];
+
 interface UserFormProps {
     initialData?: any;
     isEdit?: boolean;
@@ -52,7 +59,7 @@ export function UserForm({ initialData, isEdit }: UserFormProps) {
                 result = await createUser({
                     ...data,
                     id,
-                    role: 'user', // Admin creates regular users by default
+                    role: data.role as any,
                 });
             }
 
@@ -93,6 +100,20 @@ export function UserForm({ initialData, isEdit }: UserFormProps) {
                         required
                     >
                         {rankOptions.map((opt) => (
+                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        ))}
+                    </select>
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="role">권한 역할</Label>
+                    <select
+                        id="role"
+                        name="role"
+                        defaultValue={initialData?.role || 'user'}
+                        className="w-full h-10 px-3 rounded-md border border-zinc-200 text-sm outline-none focus:ring-2 focus:ring-blue-500 font-bold"
+                        required
+                    >
+                        {roleOptions.map((opt) => (
                             <option key={opt.value} value={opt.value}>{opt.label}</option>
                         ))}
                     </select>

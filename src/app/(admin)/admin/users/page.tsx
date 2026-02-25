@@ -11,40 +11,36 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Search, User, Settings, Edit } from "lucide-react";
 import Link from "next/link";
 
+import { formatCurrency, cn, getRankLabel } from "@/lib/utils";
+
 export const dynamic = 'force-dynamic';
 
 export default async function AdminUsersPage({
     searchParams
 }: {
-    searchParams: Promise<{ search?: string }>;
+    searchParams: Promise<{ search?: string; role?: string }>;
 }) {
     const params = await searchParams;
+    const activeRole = params.role || 'user';
 
-    // 1. 계급 한글 매핑
-    const rankLabels: Record<string, string> = {
-        general: "장성",
-        colonel: "대령",
-        lt_colonel: "중령",
-        major: "소령",
-        captain: "대위",
-        first_lt: "중위",
-        second_lt: "소위",
-        warrant: "준위",
-        sgt_major: "원사",
-        master_sgt: "상사",
-        sgt: "중사",
-        civil_servant: "군무원",
+    const roleLabels: Record<string, string> = {
+        admin: "군수담당자",
+        store: "피복판매소",
+        tailor: "체척업체",
+        user: "일반사용자",
     };
 
-    // 2. 사용자 목록 조회 (ILIKE 검색)
+    // 2. 사용자 목록 조회
     let users: any[] = [];
     try {
-        let sql = `SELECT * FROM users WHERE role = 'user'`;
-        const queryParams: any[] = [];
+        let sql = `SELECT * FROM users WHERE role = $1`;
+        const queryParams: any[] = [activeRole];
+
         if (params.search) {
             queryParams.push(`%${params.search}%`);
-            sql += ` AND name ILIKE $1`;
+            sql += ` AND (name ILIKE $2 OR military_number ILIKE $2 OR email ILIKE $2)`;
         }
+
         sql += ` ORDER BY name ASC`;
         const result = await query(sql, queryParams);
         users = result.rows;
@@ -64,13 +60,30 @@ export default async function AdminUsersPage({
                 </Link>
             </div>
 
-            <div className="flex items-center gap-4 bg-white p-4 rounded-lg border shadow-sm">
+            <div className="flex flex-col gap-4 bg-white p-4 rounded-lg border shadow-sm">
+                <nav className="flex border-b mb-2">
+                    {Object.entries(roleLabels).map(([role, label]) => (
+                        <Link
+                            key={role}
+                            href={`?role=${role}${params.search ? `&search=${params.search}` : ''}`}
+                            className={cn(
+                                "px-4 py-2 text-sm font-medium border-b-2 transition-colors",
+                                activeRole === role
+                                    ? "border-blue-600 text-blue-600"
+                                    : "border-transparent text-zinc-500 hover:text-zinc-700"
+                            )}
+                        >
+                            {label}
+                        </Link>
+                    ))}
+                </nav>
                 <form className="relative flex-1 max-w-md flex gap-2">
+                    <input type="hidden" name="role" value={activeRole} />
                     <div className="relative flex-1">
                         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
                         <Input
                             name="search"
-                            placeholder="성명으로 Like 검색..."
+                            placeholder="성명, 군번, 이메일 검색..."
                             className="pl-10"
                             defaultValue={params.search}
                         />
@@ -101,15 +114,18 @@ export default async function AdminUsersPage({
                         ) : (
                             users.map((user) => (
                                 <TableRow key={user.id} className="hover:bg-zinc-50/50">
-                                    <TableCell className="pl-6 font-mono text-xs text-zinc-500">{user.military_number}</TableCell>
-                                    <TableCell className="text-sm font-medium">{rankLabels[user.rank] || user.rank}</TableCell>
-                                    <TableCell className="font-bold flex items-center gap-2">
-                                        <User className="h-4 w-4 text-blue-500" />
-                                        {user.name}
+                                    <TableCell className="pl-6 font-mono text-xs text-zinc-500">{user.military_number || "-"}</TableCell>
+                                    <TableCell className="text-sm font-medium">{getRankLabel(user.rank) || "-"}</TableCell>
+                                    <TableCell className="font-bold flex flex-col">
+                                        <div className="flex items-center gap-2">
+                                            <User className="h-4 w-4 text-blue-500" />
+                                            {user.name}
+                                        </div>
+                                        <div className="text-[10px] text-zinc-400 font-normal ml-6">{user.email}</div>
                                     </TableCell>
-                                    <TableCell className="text-sm text-zinc-600">{user.unit}</TableCell>
+                                    <TableCell className="text-sm text-zinc-600">{user.unit || "-"}</TableCell>
                                     <TableCell>
-                                        <Badge variant={user.is_active ? "success" : "secondary" as any}>
+                                        <Badge variant={user.is_active ? "success" : "secondary" as any} className={user.is_active ? "bg-green-50 text-green-700 border-green-200" : ""}>
                                             {user.is_active ? "활성" : "비활성"}
                                         </Badge>
                                     </TableCell>

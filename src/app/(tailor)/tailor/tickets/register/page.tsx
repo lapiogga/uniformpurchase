@@ -8,8 +8,10 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Search, Scissors, CheckCircle } from 'lucide-react';
-
+import { Scissors, CheckCircle, Search, CreditCard, ArrowRight, Wallet } from "lucide-react";
+import { formatCurrency, cn, getRankLabel } from "@/lib/utils";
+import Link from "next/link";
+import { SettlementRequestButton } from "@/components/settlements/SettlementRequestButton";
 export default function TicketRegisterPage() {
     const [ticketNumber, setTicketNumber] = useState('');
     const [loading, setLoading] = useState(false);
@@ -91,8 +93,10 @@ export default function TicketRegisterPage() {
                         <div className="grid grid-cols-2 gap-8">
                             <div className="space-y-4">
                                 <div>
-                                    <Label className="text-zinc-500">사용자 이름</Label>
-                                    <p className="text-lg font-bold">{ticketData.user_name}</p>
+                                    <Label className="text-zinc-500">사용자 정보</Label>
+                                    <p className="text-lg font-bold">
+                                        {ticketData.military_number} / {getRankLabel(ticketData.rank)} / {ticketData.user_name}
+                                    </p>
                                 </div>
                                 <div>
                                     <Label className="text-zinc-500">요청 품목</Label>

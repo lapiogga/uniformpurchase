@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026-02-25] - Authentication, Security & Advanced Product Management
+
+### Added
+- **Real Authentication System**:
+  - Implemented real database-backed login in `src/actions/users.ts`.
+  - Added session management using HTTP cookies (`user_session`) for server-side state and `localStorage` for client-side persistence.
+  - Case-insensitive email login support.
+  - Added `password` column to `users` table and initialized with default `test1234`.
+- **Advanced Product Management**:
+  - **Hierarchical Category Selection**: Implemented 3-level category specification (Large -> Medium -> Small) in `ProductForm`.
+  - **Product Specification Management**: Added `ProductSpecModal` for real-time CRUD operations on product sizes/specs.
+  - **Product Editing**: Created full product edit flow with `getProductById` action and `/admin/products/edit/[id]` page.
+- **Improved UI/UX**:
+  - **No Image Placeholder**: Replaced external images with an internal, styled "No Image" placeholder for products.
+  - **Dynamic Header**: Header now displays the real name and rank of the logged-in user from the session.
+  - **Logout**: Implemented secure logout that clears all session data and cookies.
+
+### Changed
+- **Personalized Dashboards**:
+  - **Store/Tailor/User Dashboards**: Removed hardcoded test IDs. All dashboards now fetch data based on the logged-in user's role and assigned ID (Store ID, Tailor ID, etc.).
+- **Login Page**:
+  - Completely redesigned the login interface, removing hardcoded test accounts and integrating real server actions.
+- **User Settings**:
+  - Connected the Password Change page to the real `changePassword` server action with current password verification.
+
+### Fixed
+- Fixed broken links in Admin Product management table.
+- Fixed session persistence issues across page refreshes.
+
 ## [2026-02-25] - Admin Dashboard & Store Management Revamp
 
 ### Added

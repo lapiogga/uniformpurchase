@@ -15,11 +15,12 @@ View your app in AI Studio: https://ai.studio/apps/daa286cf-373d-49e2-91bf-6c8cc
 - [변경이력 (CHANGELOG)](./CHANGELOG.md)
 
 ### Current Status
+- **Authentication & Security**: Integrated real database login, cookie-based sessions, and secure logout.
 - **Admin Dashboard**: Revamped with real-time metrics and operational status overview.
-- **User Management**: Completed (Search, Registration, Editing).
+- **User Management**: Completed (Search, Registration, Editing, Role-based filtering).
 - **Point Management**: Completed (Batch Granting, Promotion Bonus UI).
-- **Product & Store Management**: Fixed registration bugs and improved UI.
-- **Sales Dashboard**: Newly created for store managers to track performance.
+- **Product Management**: Hierarchical category selection (3-level) and Specification (Size) management via popups.
+- **Sales & Store Dashboard**: Personalized for managers with real-time tracking based on session data.
 
 ## Prerequisites
 - Node.js (v18+)

@@ -16,6 +16,7 @@ export async function getInventory(storeId: string, filters?: { categoryId?: str
         i.*, 
         p.name as product_name, 
         p.product_type,
+        p.base_price as price,
         ps.spec_name,
         c.name as category_name
       FROM inventory i
