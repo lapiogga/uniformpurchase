@@ -74,19 +74,19 @@ INSERT INTO product_specs (id, product_id, spec_name, sort_order) VALUES
 ('30000000-0001-0000-0000-000000001003', '20000000-0001-0000-0000-000000000003', '체척기반 맞춤', 1);
 
 -- 6. 사용자 (Users)
-INSERT INTO users (id, email, name, role, rank, military_number, unit, enlist_date, promotion_date, retirement_date, is_active, store_id, tailor_id) VALUES
+INSERT INTO users (id, email, password, name, role, rank, military_number, unit, enlist_date, promotion_date, retirement_date, is_active, store_id, tailor_id) VALUES
 -- Admin
-('00000000-0000-0000-0000-000000000000', 'admin@mil.kr', '관리자', 'admin', 'major', '05-10042', '육군본부 군수참모부', '2005-03-01', '2015-01-01', null, true, null, null),
+('00000000-0000-0000-0000-000000000000', 'admin@mil.kr', 'test1234', '관리자', 'admin', 'major', '05-10042', '육군본부 군수참모부', '2005-03-01', '2015-01-01', null, true, null, null),
 -- Store Managers
-('00000000-0000-0000-0000-000010000001', 'store1@mil.kr', '김판매', 'store', 'master_sgt', '10-20031', '육군본부 계룡대 판매소', '2010-06-01', '2020-01-01', null, true, '00000000-0000-0000-0000-000000000001', null),
+('00000000-0000-0000-0000-000010000001', 'store1@mil.kr', 'test1234', '김판매', 'store', 'master_sgt', '10-20031', '육군본부 계룡대 판매소', '2010-06-01', '2020-01-01', null, true, '00000000-0000-0000-0000-000000000001', null),
 -- Tailor Employees
-('00000000-0000-0000-0000-000020000001', 'tailor1@mil.kr', '김테일러', 'tailor', null, null, '(주)군복장인', '2020-01-01', null, null, true, null, '00000000-0000-0000-0001-000000000001'),
+('00000000-0000-0000-0000-000020000001', 'tailor1@mil.kr', 'test1234', '김테일러', 'tailor', null, null, '(주)군복장인', '2020-01-01', null, null, true, null, '00000000-0000-0000-0001-000000000001'),
 -- General Users
-('00000000-0000-0000-0000-000000000002', 'hong@mil.kr', '홍길동', 'user', 'captain', '15-12345', '제1보병사단', '2015-03-01', '2020-01-01', null, true, null, null),
-('00000000-0000-0000-0000-000000000022', 'kim@mil.kr', '김철수', 'user', 'sgt', '18-54321', '제2작전사령부', '2018-05-15', '2022-01-01', null, true, null, null),
-('00000000-0000-0000-0000-000000000023', 'lee@mil.kr', '이순신', 'user', 'colonel', '00-99999', '합동참모본부', '2000-01-01', '2018-01-01', '2026-12-31', true, null, null),
-('00000000-0000-0000-0000-000000000024', 'park@mil.kr', '박문수', 'user', 'general', '95-11111', '지상작전사령부', '1995-02-01', '2022-01-01', null, true, null, null),
-('00000000-0000-0000-0000-000000000025', 'choi@mil.kr', '최영', 'user', 'master_sgt', '12-76543', '제5보병사단', '2012-09-01', '2021-01-01', null, true, null, null);
+('00000000-0000-0000-0000-000000000002', 'hong@mil.kr', 'test1234', '홍길동', 'user', 'captain', '15-12345', '제1보병사단', '2015-03-01', '2020-01-01', null, true, null, null),
+('00000000-0000-0000-0000-000000000022', 'kim@mil.kr', 'test1234', '김철수', 'user', 'sgt', '18-54321', '제2작전사령부', '2018-05-15', '2022-01-01', null, true, null, null),
+('00000000-0000-0000-0000-000000000023', 'lee@mil.kr', 'test1234', '이순신', 'user', 'colonel', '00-99999', '합동참모본부', '2000-01-01', '2018-01-01', '2026-12-31', true, null, null),
+('00000000-0000-0000-0000-000000000024', 'park@mil.kr', 'test1234', '박문수', 'user', 'general', '95-11111', '지상작전사령부', '1995-02-01', '2022-01-01', null, true, null, null),
+('00000000-0000-0000-0000-000000000025', 'choi@mil.kr', 'test1234', '최영', 'user', 'master_sgt', '12-76543', '제5보병사단', '2012-09-01', '2021-01-01', null, true, null, null);
 
 -- 7. 포인트 요약 (Point Summary)
 INSERT INTO point_summary (user_id, total_granted, used_points, reserved_points) VALUES

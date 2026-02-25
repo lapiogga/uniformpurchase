@@ -1,7 +1,13 @@
--- 피복구매시스템 Database Schema (PostgreSQL 15+)
--- Google Cloud SQL for PostgreSQL 용
+-- 1. 기존 테이블 및 시퀀스 삭제 (초기화용)
+DROP TABLE IF EXISTS 
+    tailor_settlements, menus, tailoring_tickets, order_items, orders, 
+    point_ledger, point_summary, inventory_log, inventory, delivery_zones, 
+    product_specs, products, categories, users, tailors, stores 
+CASCADE;
 
--- 1. 확장 기능 활성화 (UUID 생성용)
+DROP SEQUENCE IF EXISTS order_number_seq, ticket_number_seq;
+
+-- 2. 확장 기능 활성화 (UUID 생성용)
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- 1-1. 시퀀스 생성 (자동 번호용)
@@ -51,6 +57,7 @@ CREATE TABLE tailors (
 CREATE TABLE users (
     id UUID PRIMARY KEY, -- Firebase Auth / Identity Platform UID 연동
     email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255), -- 초기 시스템용 (향후 hashing 적용 권장)
     name VARCHAR(50) NOT NULL,
     role VARCHAR(20) NOT NULL CHECK (role IN ('admin', 'store', 'tailor', 'user')),
     rank VARCHAR(20), -- 계급 (user인 경우 필수)

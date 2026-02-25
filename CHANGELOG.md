@@ -18,6 +18,11 @@ All notable changes to this project will be documented in this file.
   - **No Image Placeholder**: Replaced external images with an internal, styled "No Image" placeholder for products.
   - **Dynamic Header**: Header now displays the real name and rank of the logged-in user from the session.
   - **Logout**: Implemented secure logout that clears all session data and cookies.
+- **GCP Deployment**:
+  - Configured Cloud Run & Cloud SQL for production.
+  - Added Dockerfile (standalone mode) and Cloud Build automation.
+  - Created a one-click deployment batch file (`deploy-to-gcp.bat`).
+  - Documented the entire setup and deployment process in `GCP_SETUP_AND_DEPLOY.md`.
 
 ### Changed
 - **Personalized Dashboards**:

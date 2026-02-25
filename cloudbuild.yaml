@@ -30,7 +30,7 @@ steps:
       '--region', '${_GCR_REGION}',
       '--platform', 'managed',
       '--allow-unauthenticated',
-      '--add-cloudsql-instances', '${PROJECT_ID}:${_GCR_REGION}:uniform-db-primary',
+      '--add-cloudsql-instances', '${PROJECT_ID}:${_GCR_REGION}:free-trial-first-project',
       '--set-env-vars', 'DATABASE_URL=${_DATABASE_URL},NEXTAUTH_SECRET=${_NEXTAUTH_SECRET}'
     ]
 

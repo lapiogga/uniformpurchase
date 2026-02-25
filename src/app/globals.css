@@ -1,25 +1,81 @@
-/*
- * [수정 이력]
- * - 2026-02-24 17:55: Tailwind v4 하에서 디자인 미적용(Unstyled) 현상 발생
- * - 조치: v4 표준인 @import "tailwindcss" 구문으로 변경 및 테마 설정 최적화
- */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap');
+@import url('https://webfontworld.github.io/score/SCoreDream.css');
+
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #3b82f6;
+  --color-primary: #EE1C23;
+  /* Uniqlo Red */
   --color-primary-foreground: #ffffff;
-  --color-secondary: #faf7f2;
+  --color-secondary: #f4f4f4;
+  /* Light Gray */
+  --color-brand: #EE1C23;
+  --color-muted: #767676;
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #FFFFFF;
+  --foreground: #000000;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, "Noto Sans KR", sans-serif;
+  font-family: 'Noto Sans KR', 'S-CoreDream', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.03em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+.font-premium {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+}
+
+.font-dream {
+  font-family: 'SCoreDream', 'S-CoreDream', sans-serif;
+}
+
+/* Uniqlo Style Utilities */
+.uni-red-bg {
+  background-color: #EE1C23;
+}
+
+.uni-text-red {
+  color: #EE1C23;
+}
+
+.uni-card {
+  background: white;
+  transition: opacity 0.3s ease;
+}
+
+.uni-card:hover {
+  opacity: 0.8;
+}
+
+/* Navy Digital Camo Pattern Utility */
+.digital-pattern {
+  background-image:
+    linear-gradient(45deg, #1e3b5a 25%, transparent 25%),
+    linear-gradient(-45deg, #1e3b5a 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #1e3b5a 75%),
+    linear-gradient(-45deg, transparent 75%, #1e3b5a 75%);
+  background-size: 8px 8px;
+  background-color: #2b4c7e;
+  opacity: 0.1;
+}
+
+.uni-button {
+  background-color: #000000;
+  color: #ffffff;
+  border-radius: 0;
+  font-weight: 600;
 }
 
 .auth-card {

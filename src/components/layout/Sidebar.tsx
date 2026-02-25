@@ -7,14 +7,18 @@ import { navItems } from '@/lib/menu-config';
 
 interface SidebarProps {
     role: 'admin' | 'store' | 'user' | 'tailor';
+    isMobile?: boolean;
 }
 
-export function Sidebar({ role }: SidebarProps) {
+export function Sidebar({ role, isMobile }: SidebarProps) {
     const pathname = usePathname();
     const filteredItems = navItems.filter((item) => item.roles.includes(role));
 
     return (
-        <aside className="w-64 border-r bg-[#FAF7F2] shrink-0 hidden md:block">
+        <aside className={cn(
+            "w-64 border-r bg-[#FAF7F2] shrink-0 h-full",
+            isMobile ? "block" : "hidden md:block"
+        )}>
             <nav className="flex flex-col gap-1 p-4 h-full">
                 <div className="flex-1 flex flex-col gap-1">
                     {filteredItems.map((item) => {
