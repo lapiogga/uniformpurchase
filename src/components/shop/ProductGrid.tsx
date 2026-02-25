@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Package, Check } from "lucide-react";
+import { ShoppingCart, Package, ExternalLink } from "lucide-react";
 import { formatCurrency, cn } from "@/lib/utils";
 import Image from "next/image";
 import { createOnlineOrder } from "@/actions/orders";
@@ -42,19 +42,14 @@ export function ProductGrid({
 
         setLoading(product.id);
         try {
-            // Mock store ID (In real app, user might select a store or it's assigned)
             const storeId = "00000000-0000-0000-0000-000000000001";
-
-            // For online orders, we might need to select a spec. 
-            // Simplified: use a default spec if available or just the first one.
-            // In a full implementation, this would open a modal to select size.
             const res = await createOnlineOrder({
                 userId,
                 storeId,
                 productType: product.product_type,
                 items: [{
                     productId: product.id,
-                    specId: product.id, // Simplified for now, real app needs spec selection
+                    specId: product.id,
                     quantity: 1,
                     unitPrice: product.base_price
                 }]
@@ -75,80 +70,86 @@ export function ProductGrid({
 
     return (
         <div className="space-y-12">
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
                 {products.map((product, index) => (
-                    <Card
+                    <section
                         key={product.id}
-                        className="pearl-card group overflow-hidden flex flex-col border-none ring-1 ring-zinc-200/50 animate-in fade-in slide-in-from-bottom-6 duration-700 fill-mode-both cursor-pointer"
+                        className="bg-white p-2 border-b-4 border-zinc-200 group animate-in fade-in slide-in-from-bottom-8 duration-700 fill-mode-both"
                         style={{ animationDelay: `${index * 50}ms` }}
-                        onClick={() => openDetail(product)}
                     >
-                        <div className="aspect-[1/1] bg-white relative overflow-hidden flex items-center justify-center p-4">
+                        {/* Image Area - Strongly Typed Style */}
+                        <div
+                            className="image featured relative h-72 overflow-hidden bg-zinc-50 cursor-pointer"
+                            onClick={() => openDetail(product)}
+                        >
                             {product.image_url ? (
                                 <Image
                                     src={product.image_url}
                                     alt={product.name}
-                                    width={300}
-                                    height={300}
-                                    className="object-contain w-full h-full group-hover:scale-105 transition-transform duration-1000 ease-out"
+                                    fill
+                                    className="object-cover group-hover:scale-110 transition-transform duration-[1.5s] ease-out"
                                 />
                             ) : (
-                                <div className="flex flex-col items-center justify-center text-zinc-200 gap-3 group-hover:text-gold-premium/30 transition-colors duration-500">
-                                    <Package className="h-12 w-12 opacity-10" />
-                                    <span className="text-[7px] font-black uppercase tracking-[0.3em] opacity-30 text-center">시각화 대기 중</span>
+                                <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-200 gap-4 group-hover:bg-zinc-100 transition-colors">
+                                    <Package className="h-16 w-16 opacity-10" />
+                                    <span className="text-[10px] font-black uppercase tracking-[0.4em] opacity-30 italic">No Visual Asset</span>
                                 </div>
                             )}
-                            <div className="absolute inset-0 bg-gradient-to-t from-zinc-50/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
-                            {product.product_type === 'custom' && (
-                                <div className="absolute top-4 left-4 gold-gradient text-white text-[8px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-gold-premium/20 ring-2 ring-white">
-                                    맞춤제작
-                                </div>
-                            )}
+                            {/* Status Tag */}
+                            <div className="absolute top-4 left-4">
+                                {product.product_type === 'custom' && (
+                                    <div className="bg-[#444] text-white text-[10px] font-black px-4 py-1.5 uppercase tracking-widest shadow-xl">
+                                        Custom
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                        <CardContent className="p-5 flex-1 flex flex-col justify-between bg-white relative">
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-2">
-                                    <div className="h-[1.5px] w-4 bg-gold-premium/30" />
-                                    <p className="text-[9px] font-black text-zinc-400 uppercase tracking-widest">{product.category_name || '기성완제품'}</p>
+
+                        {/* Info Area */}
+                        <div className="p-8 text-center bg-white">
+                            <header className="mb-6">
+                                <h3 className="text-xl font-black tracking-widest text-[#444] uppercase">{product.name}</h3>
+                                <p className="text-xs font-bold text-zinc-300 mt-1 uppercase tracking-widest">{product.category_name || 'Standard Gear'}</p>
+                            </header>
+
+                            <div className="flex flex-col items-center gap-6">
+                                <div className="flex flex-col">
+                                    <span className="text-2xl font-black text-[#ed786a] tracking-tight">{formatCurrency(product.base_price)}</span>
+                                    <span className="text-[9px] font-black text-zinc-200 uppercase tracking-widest mt-1">Required Points</span>
                                 </div>
-                                <h3 className="font-black text-lg text-zinc-900 leading-tight tracking-tight group-hover:text-gold-premium transition-colors duration-300 line-clamp-2 min-h-[3rem]">{product.name}</h3>
-                            </div>
-                            <div className="flex flex-col gap-4 mt-6 pt-4 border-t border-zinc-50">
-                                <div className="flex items-baseline justify-between">
-                                    <span className="text-[8px] font-black text-zinc-300 uppercase tracking-widest">포인트</span>
-                                    <span className="text-xl font-black gold-text-gradient tracking-tighter">{formatCurrency(product.base_price)}</span>
+                                <div className="flex w-full gap-2">
+                                    <button
+                                        className="flex-1 py-4 bg-[#f0f0f0] text-zinc-400 font-black text-[10px] tracking-widest uppercase hover:bg-[#ed786a] hover:text-white transition-all active:scale-95"
+                                        onClick={() => openDetail(product)}
+                                    >
+                                        상세보기
+                                    </button>
+                                    <button
+                                        className="flex-1 py-4 bg-[#444] text-white font-black text-[10px] tracking-widest uppercase hover:bg-[#ed786a] transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleOrder(product);
+                                        }}
+                                        disabled={loading === product.id}
+                                    >
+                                        {loading === product.id ? '대기중...' : '보급신청'}
+                                    </button>
                                 </div>
-                                <Button
-                                    size="sm"
-                                    className="w-full gold-gradient text-white hover:brightness-110 active:scale-95 transition-all shadow-md shadow-gold-premium/10 border-none h-10 rounded-xl font-black text-[10px] tracking-widest gap-2"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleOrder(product);
-                                    }}
-                                    disabled={loading === product.id}
-                                >
-                                    {loading === product.id ? "..." : (
-                                        <>
-                                            <ShoppingCart className="h-3.5 w-3.5" />
-                                            주문하기
-                                        </>
-                                    )}
-                                </Button>
                             </div>
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </section>
                 ))}
 
                 {products.length === 0 && (
-                    <div className="col-span-full flex flex-col items-center justify-center py-40 bg-white border-2 border-dashed border-zinc-100 rounded-[3rem]">
-                        <Package className="h-20 w-20 mb-8 text-zinc-100 animate-pulse" />
-                        <p className="text-zinc-300 font-black tracking-widest uppercase text-xs">준비된 상품이 없습니다.</p>
+                    <div className="col-span-full py-40 flex flex-col items-center justify-center opacity-30">
+                        <Package className="h-20 w-20 mb-6" />
+                        <p className="font-black tracking-[0.3em] uppercase text-xs italic">준비된 상품이 존재하지 않습니다.</p>
                     </div>
                 )}
             </div>
 
-            {/* 상세 보기 모달 */}
+            {/* Product Detail Modal */}
             <ProductDetailModal
                 product={selectedProduct}
                 open={isDetailOpen}

@@ -1,0 +1,38 @@
+@import url("/template/strongly-typed/assets/css/main.css");
+
+/* Integration Fixes */
+#header {
+    background-color: #ffffff;
+    padding-top: 4em;
+    padding-bottom: 2em;
+}
+
+#logo a {
+    border-bottom: 0;
+}
+
+#nav>ul>li>span,
+#nav>ul>li>a>span {
+    font-weight: 700;
+}
+
+.box.post {
+    background: #fff;
+    padding: 3em 3em 3.5em 3em;
+    margin-bottom: 4em;
+}
+
+.image.featured {
+    margin: 0 0 3em 0;
+}
+
+#banner {
+    background: #222;
+    color: #fff;
+    padding: 3em 0;
+    text-align: center;
+}
+
+#banner strong {
+    color: #ed786a;
+}

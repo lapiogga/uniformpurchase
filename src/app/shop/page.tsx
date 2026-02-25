@@ -1,17 +1,22 @@
 /**
  * [수정 이력]
- * - 2026-02-25: 신규 프리미엄 쇼핑몰(Mall) 전용 페이지 구축
- * - 조치: 검색, 필터, 장바구니 기능이 통합된 현대적인 e-commerce 레이아웃 적용
+ * - 2026-02-25: HTML5UP 'Strongly Typed' 템플릿 스타일 적용
+ * - 조치: 클래식하고 중후한 타이포그래피와 박스 레이아웃 도입
  */
+import "./integrated-template.css";
 import { getProducts } from "@/actions/products";
 import { getPointSummary } from "@/actions/points";
-import { formatCurrency } from "@/lib/utils";
+import { getUserOnlineOrders } from "@/actions/orders";
+import { getNotices } from "@/actions/notices";
+import { formatCurrency, cn } from "@/lib/utils";
 import { ProductGrid } from "@/components/shop/ProductGrid";
 import { MallHeader } from "@/components/shop/MallHeader";
+import { FeedbackForm } from "@/components/shop/FeedbackForm";
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Image from "next/image";
-import { Bell, MessageSquare, ChevronRight, Clock, RefreshCw, Package } from "lucide-react";
+import { Bell, MessageSquare, Clock, Package, ChevronRight } from "lucide-react";
+import { format } from "date-fns";
 
 export default async function ShoppingMallPage({
     searchParams,
@@ -22,7 +27,6 @@ export default async function ShoppingMallPage({
     const activeTab = params.type || 'finished';
     const searchQuery = params.q || '';
 
-    // 세션 정보 확인 (로그인 필수인 쇼핑몰 가정)
     const cookieStore = await cookies();
     const sessionCookie = cookieStore.get('user_session');
 
@@ -33,13 +37,15 @@ export default async function ShoppingMallPage({
     const session = JSON.parse(sessionCookie.value);
     const userId = session.id;
 
-    // 데이터 fetch (검색어 포함)
-    const productsResult = await getProducts({ productType: activeTab });
-    const pointsResult = await getPointSummary(userId);
+    const [productsResult, pointsResult, ordersResult, noticesResult] = await Promise.all([
+        getProducts({ productType: activeTab }),
+        getPointSummary(userId),
+        getUserOnlineOrders(userId, 3),
+        getNotices(5)
+    ]);
 
     let products = Array.isArray(productsResult?.data) ? productsResult.data : [];
 
-    // 클라이언트 사이드 검색이 아닌 서버 사이드 필터링 (간이)
     if (searchQuery) {
         products = products.filter(p =>
             p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -50,203 +56,196 @@ export default async function ShoppingMallPage({
     const pointSummary = pointsResult?.success ? pointsResult.data : null;
     const availablePoints = pointSummary ? (Number(pointSummary.total_granted || 0) - Number(pointSummary.used_points || 0) - Number(pointSummary.reserved_points || 0)) : 0;
 
+    const recentOrders = ordersResult?.success ? ordersResult.data : [];
+    const recentNotices = noticesResult?.success ? noticesResult.data : [];
+
     return (
-        <div className="min-h-screen bg-[#F8FAFC] pb-20 text-zinc-900 font-sans">
-            {/* 전용 헤더 (검색 및 장바구니 포함) */}
-            <MallHeader availablePoints={availablePoints} />
+        <div id="page-wrapper" className="homepage bg-[#f0f0f0]">
 
-            <main className="max-w-7xl mx-auto px-6 space-y-16 mt-8">
-                {/* 히어로 섹션 */}
-                <div className="relative h-[20rem] md:h-[28rem] rounded-[2rem] md:rounded-[3.5rem] overflow-hidden flex items-center mb-10 md:mb-16 shadow-2xl">
-                    <Image
-                        src="/assets/user_hero_banner.png"
-                        alt="Premium Banner"
-                        fill
-                        className="object-cover brightness-75 scale-105 active:scale-100 transition-transform duration-[3s]"
-                        priority
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
-                    <div className="relative z-20 w-full px-8 md:px-20 space-y-6 md:space-y-10">
-                        <div className="space-y-4 md:space-y-6">
-                            <span className="text-gold-premium text-xs md:text-sm font-black uppercase tracking-[0.3em] md:tracking-[0.5em] block animate-in fade-in slide-in-from-left duration-700">
-                                2026 연간 프리미엄 셀렉션
-                            </span>
-                            <h2 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter text-white leading-[0.9] md:leading-[0.85] drop-shadow-2xl animate-in fade-in slide-in-from-left duration-1000 delay-100">
-                                명작의 품격, <br /> <span className="gold-text-gradient">일상이 예술이 되다</span>
-                            </h2>
-                        </div>
-                        <p className="text-zinc-200 text-lg md:text-2xl font-medium max-w-2xl leading-relaxed animate-in fade-in slide-in-from-left duration-1000 delay-200">
-                            최고급 소재와 장인의 손길로 완성된 독보적인 컬렉션. <br className="hidden md:block" />
-                            당신의 명예를 증명하는 단 하나의 유니폼을 경험하세요.
-                        </p>
-                        <div className="flex gap-4 md:gap-6 pt-4 md:pt-6 animate-in fade-in slide-in-from-left duration-1000 delay-300">
-                            <button className="gold-gradient text-white px-8 md:px-12 py-4 md:py-6 rounded-full font-black text-xs md:text-sm tracking-widest shadow-2xl shadow-gold-premium/40 hover:brightness-110 active:scale-95 transition-all">
-                                지금 바로 둘러보기
-                            </button>
-                        </div>
+            {/* 1. Header Section */}
+            <section id="header" className="bg-white">
+                <div className="container mx-auto px-10">
+                    <h1 id="logo" className="text-center">
+                        <a href="/shop" className="text-6xl font-black tracking-widest text-[#ed786a] uppercase hover:opacity-80 transition-opacity">
+                            구매<span className="text-[#444]">몰</span>
+                        </a>
+                    </h1>
+                    <p className="text-center text-zinc-400 mt-4 font-semibold tracking-widest uppercase">
+                        대한민국 해군 프리미엄 보급 전용 아카이브
+                    </p>
+
+                    <div className="mt-12">
+                        <MallHeader availablePoints={availablePoints} user={session} />
                     </div>
                 </div>
+            </section>
 
-                {/* 상품 리스트 섹션 */}
-                <div className="space-y-12">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-10 border-b border-zinc-200 pb-10">
-                        <div className="space-y-3">
-                            <h3 className="text-4xl font-black tracking-tighter text-zinc-900 font-premium">프리미엄 갤러리</h3>
-                            <p className="text-zinc-600 text-lg font-semibold tracking-wide">완벽한 품질을 지향하는 최상의 피복 라인업입니다.</p>
-                        </div>
-
-                        <div className="flex items-center gap-5 bg-white p-1.5 rounded-full shadow-xl border border-zinc-100">
-                            <a
-                                href="?type=finished"
-                                className={`px-10 py-4 rounded-full text-[13px] font-black tracking-widest transition-all ${activeTab === 'finished' ? 'gold-gradient text-white' : 'text-zinc-400 hover:text-zinc-900'
-                                    }`}
-                            >
-                                기성완제품
-                            </a>
-                            <a
-                                href="?type=custom"
-                                className={`px-10 py-4 rounded-full text-[13px] font-black tracking-widest transition-all ${activeTab === 'custom' ? 'gold-gradient text-white' : 'text-zinc-400 hover:text-zinc-900'
-                                    }`}
-                            >
-                                맞춤제작
-                            </a>
-                        </div>
-                    </div>
-
-                    <ProductGrid products={products} userId={userId} availablePoints={availablePoints} />
+            {/* 2. Banner Section */}
+            <section id="banner">
+                <div className="container py-10 px-10 mx-auto text-center">
+                    <p className="text-4xl font-medium tracking-tight text-white/90">
+                        귀하의 현재 가용 보급 포인트는 <strong className="font-black underline underline-offset-8 decoration-4">{formatCurrency(availablePoints)}</strong> 입니다.
+                    </p>
                 </div>
+            </section>
 
-                {/* 나의 활동 내역 (History) */}
-                <div id="history" className="pt-16 md:pt-24 space-y-8 md:space-y-12">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                        <div className="flex items-center gap-4 md:gap-6">
-                            <div className="p-3 md:p-4 bg-zinc-900 rounded-2xl md:rounded-[1.5rem] shadow-xl">
-                                <Clock className="h-5 w-5 md:h-6 md:w-6 text-gold-premium" />
-                            </div>
-                            <div className="space-y-1">
-                                <h4 className="text-2xl md:text-3xl font-black tracking-tighter text-zinc-900">나의 프리미엄 활동</h4>
-                                <p className="text-zinc-500 font-bold text-xs md:text-sm uppercase tracking-widest">포인트 및 주문 이력</p>
-                            </div>
-                        </div>
-                        <button className="flex items-center justify-center gap-2 text-[10px] md:text-xs font-black text-zinc-400 hover:text-zinc-900 transition-colors uppercase tracking-widest bg-zinc-50 px-5 py-3 rounded-full w-fit">
-                            <RefreshCw className="h-3.5 w-3.5" />
-                            내역 새로고침
-                        </button>
-                    </div>
+            {/* 3. Main Content Section (Product Grid + Sidebar) */}
+            <section id="main">
+                <div className="container mx-auto py-24 px-10">
+                    <div className="row gtr-150 flex flex-col lg:flex-row gap-16">
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-                        {/* 최근 주문 내역 */}
-                        <div className="md:col-span-2 glass-effect rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 border border-white shadow-2xl space-y-6 md:space-y-8">
-                            <h5 className="text-lg md:text-xl font-black tracking-tight text-zinc-900">최근 구매 목록</h5>
-                            <div className="space-y-4 md:space-y-6">
-                                {[1, 2, 3].map((_, i) => (
-                                    <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 md:p-6 bg-white/40 rounded-2xl md:rounded-3xl border border-zinc-100 hover:border-gold-premium/20 transition-all group gap-4">
-                                        <div className="flex items-center gap-4 md:gap-6">
-                                            <div className="h-12 w-12 md:h-16 md:w-16 bg-white rounded-xl md:rounded-2xl flex items-center justify-center shadow-sm shrink-0">
-                                                <Package className="h-6 w-6 md:h-8 md:w-8 text-zinc-100" />
-                                            </div>
-                                            <div className="space-y-1">
-                                                <p className="text-xs md:text-sm font-black text-zinc-900 uppercase">프리미엄 다목적 재킷</p>
-                                                <p className="text-[10px] md:text-[11px] font-bold text-zinc-400">2026.02.24 | 배송 준비 중</p>
-                                            </div>
-                                        </div>
-                                        <div className="text-left sm:text-right border-t sm:border-t-0 pt-3 sm:pt-0 border-zinc-100 flex sm:flex-col items-center sm:items-end justify-between sm:justify-center">
-                                            <p className="text-lg font-black gold-text-gradient tracking-tighter">1,250P</p>
-                                            <p className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest sm:mt-1">구매 완료</p>
-                                        </div>
+                        {/* Content: Product Grid */}
+                        <div id="content" className="lg:w-2/3 space-y-20">
+                            <article className="box post bg-white shadow-sm ring-1 ring-zinc-100">
+                                <header className="mb-12 border-b border-zinc-50 pb-8 flex items-center justify-between">
+                                    <h2 className="text-4xl font-black tracking-tight text-[#444] uppercase italic">
+                                        추천 <strong className="text-[#ed786a]">컬렉션</strong>
+                                    </h2>
+                                    <div className="flex gap-4">
+                                        {['finished', 'custom'].map(type => (
+                                            <a
+                                                key={type}
+                                                href={`/shop?type=${type}`}
+                                                className={cn(
+                                                    "px-6 py-2 text-xs font-black tracking-widest uppercase transition-all",
+                                                    activeTab === type ? "bg-[#444] text-white" : "bg-zinc-100 text-zinc-400"
+                                                )}
+                                            >
+                                                {type === 'finished' ? '기성제품' : '맞춤제작'}
+                                            </a>
+                                        ))}
                                     </div>
-                                ))}
-                                <button className="w-full py-4 md:py-5 text-[10px] md:text-[11px] font-black text-zinc-400 hover:text-zinc-900 transition-colors uppercase tracking-widest bg-zinc-50/50 rounded-2xl">전체 활동 내역 보기</button>
-                            </div>
+                                </header>
+
+                                <ProductGrid products={products} userId={userId} availablePoints={availablePoints} />
+                            </article>
                         </div>
 
-                        {/* 최근 포인트 적립 */}
-                        <div className="glass-effect rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 border border-white shadow-2xl space-y-6 md:space-y-8">
-                            <h5 className="text-lg md:text-xl font-black tracking-tight text-zinc-900">포인트 적립 현황</h5>
-                            <div className="space-y-4 md:space-y-6">
-                                {[
-                                    { title: "분기 보급 포인트 지급", amount: "+5,000P", date: "2026.01.01" },
-                                    { title: "임무 수행 특별 격려금", amount: "+1,200P", date: "2026.02.15" },
-                                    { title: "피복 반납 환급금", amount: "+350P", date: "2026.02.20" },
-                                ].map((item, i) => (
-                                    <div key={i} className="flex items-center justify-between p-4 md:p-5 bg-white/40 rounded-xl md:rounded-2xl border border-zinc-50">
-                                        <div className="space-y-1">
-                                            <p className="text-[11px] md:text-xs font-black text-zinc-700">{item.title}</p>
-                                            <p className="text-[9px] md:text-[10px] font-bold text-zinc-400">{item.date}</p>
-                                        </div>
-                                        <span className="text-xs md:text-sm font-black text-emerald-600">{item.amount}</span>
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="pt-4">
-                                <div className="bg-zinc-900 rounded-2xl md:rounded-3xl p-5 md:p-6 space-y-1 md:space-y-2 text-center shadow-xl">
-                                    <p className="text-[9px] md:text-[10px] font-black text-zinc-500 uppercase tracking-widest">Total Assets</p>
-                                    <p className="text-2xl md:text-3xl font-black text-white tracking-tighter">{formatCurrency(availablePoints)}</p>
-                                </div>
-                            </div>
+                        {/* Sidebar: Activity & Notices */}
+                        <div id="sidebar" className="lg:w-1/3 space-y-16">
+                            <section className="box bg-white p-12 shadow-sm ring-1 ring-zinc-100 border-t-8 border-[#ed786a]">
+                                <header className="mb-8 flex items-center gap-4">
+                                    <Clock className="h-6 w-6 text-[#ed786a]" />
+                                    <h3 className="text-xl font-black tracking-widest text-[#444] uppercase">최근 활동</h3>
+                                </header>
+                                {recentOrders.length > 0 ? (
+                                    <ul className="divided space-y-8">
+                                        {recentOrders.map((order: any) => (
+                                            <li key={order.id} className="group">
+                                                <article className="box excerpt border-b border-zinc-50 pb-6 group-hover:bg-zinc-50 transition-colors cursor-default">
+                                                    <header className="mb-2">
+                                                        <span className="text-[10px] font-black text-[#ed786a] tracking-[0.2em] uppercase">
+                                                            {format(new Date(order.created_at), 'MMM dd, yyyy')}
+                                                        </span>
+                                                        <h4 className="text-md font-bold text-[#444] mt-1 line-clamp-1">{order.product_names}</h4>
+                                                    </header>
+                                                    <p className="text-sm text-zinc-400 font-medium">#{order.order_number} • {formatCurrency(order.total_amount)}</p>
+                                                </article>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p className="text-sm text-zinc-300 italic py-10 text-center">최근 주문 내역이 없습니다.</p>
+                                )}
+                            </section>
+
+                            <section className="box bg-white p-12 shadow-sm ring-1 ring-zinc-100 border-t-8 border-[#444]">
+                                <header className="mb-8 flex items-center gap-4">
+                                    <Bell className="h-6 w-6 text-zinc-400" />
+                                    <h3 className="text-xl font-black tracking-widest text-[#444] uppercase">공지사항</h3>
+                                </header>
+                                {recentNotices.length > 0 ? (
+                                    <ul className="divided space-y-6">
+                                        {recentNotices.map((notice: any) => (
+                                            <li key={notice.id} className="flex items-start gap-4 group">
+                                                <ChevronRight className="h-4 w-4 text-[#ed786a] mt-1 shrink-0" />
+                                                <div className="space-y-1">
+                                                    <a href="#" className={cn(
+                                                        "text-sm font-bold group-hover:text-[#ed786a] transition-colors line-clamp-1",
+                                                        notice.is_priority ? "text-red-600" : "text-zinc-500"
+                                                    )}>
+                                                        {notice.title}
+                                                    </a>
+                                                    <p className="text-[10px] text-zinc-300 uppercase tracking-widest">{format(new Date(notice.created_at), 'yyyy.MM.dd')}</p>
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p className="text-sm text-zinc-300 italic py-8 text-center">등록된 공지사항이 없습니다.</p>
+                                )}
+                            </section>
                         </div>
+
                     </div>
                 </div>
+            </section>
 
-                {/* News & Q&A Section */}
-                <div id="notices" className="grid grid-cols-1 lg:grid-cols-2 gap-10 pt-24">
-                    {/* 공지사항 (Notice) */}
-                    <div className="glass-effect rounded-[3rem] p-12 space-y-10 border border-white shadow-2xl">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-5">
-                                <div className="p-4 bg-blue-50 rounded-[1.5rem]">
-                                    <Bell className="h-6 w-6 text-blue-600" />
-                                </div>
-                                <h4 className="text-2xl font-black tracking-tight text-zinc-900">공지사항</h4>
+            {/* 4. Features Section (Hero Highlights - Moved below main content) */}
+            <section id="features" className="bg-zinc-50 border-y border-zinc-100">
+                <div className="container mx-auto py-24 px-10">
+                    <header className="mb-20 text-center">
+                        <h2 className="text-4xl font-black tracking-[0.2em] text-[#444] uppercase">
+                            주요 <strong>보급 품목</strong>
+                        </h2>
+                    </header>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
+                        <section className="bg-white p-2 border-b-4 border-zinc-200">
+                            <div className="image featured relative h-80 block overflow-hidden">
+                                <Image src="https://images.unsplash.com/photo-1599427303058-f06cbdf4bb91?w=800&q=80" alt="" fill className="object-cover hover:scale-110 transition-transform duration-1000" />
                             </div>
-                            <button className="text-[11px] font-black text-zinc-400 hover:text-zinc-900 transition-colors uppercase tracking-widest">전체보기 +</button>
-                        </div>
-                        <div className="space-y-6">
-                            {[
-                                { title: "2026 SS 프리미엄 라인업 신규 입고 안내", date: "2026.02.25", tag: "신상" },
-                                { title: "기성완제품 하계 정복 재고 보충 안내", date: "2026.02.22", tag: "재고" },
-                                { title: "포인트 결제 시스템 서버 점검 공지 (02/28)", date: "2026.02.20", tag: "점검" },
-                            ].map((item, i) => (
-                                <div key={i} className="flex items-center justify-between group cursor-pointer p-2 hover:bg-zinc-50/50 rounded-2xl transition-all">
-                                    <div className="flex items-center gap-5">
-                                        <span className={`text-[10px] font-black px-3 py-1.5 rounded-lg ${item.tag === '신상' ? 'bg-gold-premium/10 text-gold-premium' : 'bg-zinc-100 text-zinc-500'
-                                            }`}>{item.tag}</span>
-                                        <p className="text-base font-bold text-zinc-600 group-hover:text-zinc-900 transition-colors line-clamp-1">{item.title}</p>
-                                    </div>
-                                    <span className="text-[11px] font-bold text-zinc-300 whitespace-nowrap">{item.date}</span>
-                                </div>
-                            ))}
-                        </div>
+                            <header className="p-8 text-center bg-white">
+                                <h3 className="text-xl font-black tracking-widest text-[#444] uppercase">Winter Deck Gear</h3>
+                                <p className="text-sm font-medium text-zinc-400 mt-2">최강의 방한 성능과 활동성</p>
+                            </header>
+                        </section>
+                        <section className="bg-white p-2 border-b-4 border-zinc-200">
+                            <div className="image featured relative h-80 block overflow-hidden">
+                                <Image src="https://images.unsplash.com/photo-1521404063675-9e6e02660d5c?w=800&q=80" alt="" fill className="object-cover hover:scale-110 transition-transform duration-1000" />
+                            </div>
+                            <header className="p-8 text-center bg-white">
+                                <h3 className="text-xl font-black tracking-widest text-[#444] uppercase">Tactical Accessories</h3>
+                                <p className="text-sm font-medium text-zinc-400 mt-2">정밀한 전술 지원 장비</p>
+                            </header>
+                        </section>
+                        <section className="bg-white p-2 border-b-4 border-zinc-200">
+                            <div className="image featured relative h-80 block overflow-hidden">
+                                <Image src="https://images.unsplash.com/photo-1505115821845-22ec358927ad?w=800&q=80" alt="" fill className="object-cover hover:scale-110 transition-transform duration-1000" />
+                            </div>
+                            <header className="p-8 text-center bg-white">
+                                <h3 className="text-xl font-black tracking-widest text-[#444] uppercase">Official Uniforms</h3>
+                                <p className="text-sm font-medium text-zinc-400 mt-2">해군의 품격, 맞춤 제작 정복</p>
+                            </header>
+                        </section>
                     </div>
+                </div>
+            </section>
 
-                    {/* 문의하기 (Q&A) */}
-                    <div className="glass-effect rounded-[3rem] p-12 space-y-10 border border-white shadow-2xl">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-5">
-                                <div className="p-4 bg-gold-premium/5 rounded-[1.5rem]">
-                                    <MessageSquare className="h-6 w-6 text-gold-premium" />
-                                </div>
-                                <h4 className="text-2xl font-black tracking-tight text-zinc-900">문의하기</h4>
-                            </div>
-                            <button className="text-[11px] font-black text-zinc-400 hover:text-zinc-900 transition-colors uppercase tracking-widest">내 문의내역</button>
-                        </div>
-                        <div className="space-y-8">
-                            <p className="text-lg text-zinc-500 font-medium leading-relaxed">
-                                상품 정보나 주문 처리에 대해 궁금하신 점이 있으신가요? <br />
-                                담당 테일러가 직접 정성껏 답변해 드립니다.
+            {/* 5. Footer Section */}
+            <section id="footer" className="bg-[#222] text-white/50 py-24">
+                <div className="container mx-auto px-10">
+                    <header className="mb-16 text-center">
+                        <h2 className="text-3xl font-black tracking-[0.3em] text-white uppercase">문의 및 <strong>의견 제출</strong></h2>
+                    </header>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-20">
+                        <section className="space-y-10">
+                            <p className="text-lg leading-relaxed font-dream">
+                                해군 피복 보급 통합 관리 시스템은 장병들의 편의와 보급 신뢰성 확보를 최우선으로 합니다.
+                                시스템 이용 관련 문의는 고객지원팀이나 예하 기지 보급관에게 요청하여 주시기 바랍니다.
                             </p>
-                            <div className="flex gap-4">
-                                <button className="flex-1 py-5 bg-white border border-zinc-100 rounded-3xl text-[13px] font-black text-zinc-900 shadow-sm hover:shadow-lg transition-all active:scale-95">
-                                    자주 묻는 질문(FAQ)
-                                </button>
-                                <button className="flex-1 py-5 gold-gradient text-white rounded-3xl text-[13px] font-black shadow-2xl shadow-gold-premium/20 hover:brightness-110 transition-all active:scale-95">
-                                    1:1 온라인 상담
-                                </button>
-                            </div>
-                        </div>
+                            <ul className="flex flex-col gap-6 text-sm font-bold tracking-widest">
+                                <li className="flex items-center gap-4"><Package className="h-5 w-5" /> 대한민국 해군 보급창 통합 관리 시스템</li>
+                                <li className="flex items-center gap-4"><MessageSquare className="h-5 w-5" /> support@navyarchive.mil.kr</li>
+                            </ul>
+                        </section>
+                        <section className="bg-white/5 p-12 backdrop-blur-sm border border-white/10">
+                            <FeedbackForm userId={userId} />
+                        </section>
                     </div>
                 </div>
-            </main>
+            </section>
+
         </div>
     );
 }
+

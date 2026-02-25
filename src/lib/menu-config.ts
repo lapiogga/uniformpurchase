@@ -16,6 +16,8 @@ export const navItems: NavItem[] = [
     { title: "체척업체 관리", href: "/admin/tailors", roles: ["admin"] },
     { title: "취소요청 승인", href: "/admin/tickets/cancellations", roles: ["admin"] },
     { title: "업체 정산관리", href: "/admin/settlements", roles: ["admin"] },
+    { title: "공지사항 관리", href: "/admin/notices", roles: ["admin"] },
+    { title: "의견수렴", href: "/admin/feedbacks", roles: ["admin"] },
 
     // Store Items
     { title: "판매소 대시보드", href: "/store/dashboard", roles: ["store"] },

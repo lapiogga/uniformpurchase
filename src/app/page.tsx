@@ -28,12 +28,14 @@ import { cn } from '@/lib/utils';
 import { Toaster } from 'sonner';
 
 const navyImages = [
-    "https://images.unsplash.com/photo-1599427303058-f06cbdf4bb91?w=1600&q=80", // 01: Warship Focus
-    "https://images.unsplash.com/photo-1498429089284-41f8cf3ffd39?w=1600&q=80", // 02: Sea Fleet
-    "https://images.unsplash.com/photo-1521404063675-9e6e02660d5c?w=1600&q=80", // 03: Vessel Engineering
-    "https://images.unsplash.com/photo-1505115821845-22ec358927ad?w=1600&q=80", // 04: Horizon
-    "https://images.unsplash.com/photo-1517404215738-15263e9f9178?w=1600&q=80", // 05: Tech
-    "https://images.unsplash.com/photo-1544436024-42f0636fb482?w=1600&q=80"  // 06: Naval Steel
+    "https://images.unsplash.com/photo-1599427303058-f06cbdf4bb91?q=80&w=1500", // 01: Modern Warship at Sea
+    "https://images.unsplash.com/photo-1498623116890-394ad9239b25?q=80&w=1500", // 02: Fleet at Sunset
+    "https://images.unsplash.com/photo-1505115821845-22ec358927ad?q=80&w=1500", // 03: Deep Blue Ocean Horizon
+    "https://images.unsplash.com/photo-1544436024-42f0636fb482?q=80&w=1500", // 04: Tactical Naval Operation
+    "https://images.unsplash.com/photo-1521404063675-9e6e02660d5c?q=80&w=1500", // 05: Ship Deck & Equipment
+    "https://images.unsplash.com/photo-1517404215738-15263e9f9178?q=80&w=1500", // 06: High-Tech Radar & Comms
+    "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1500", // 07: Bridge Control System
+    "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?q=80&w=1500"  // 08: Powerful Ocean Waves
 ];
 
 export default function LandingPage() {
@@ -41,12 +43,20 @@ export default function LandingPage() {
     const [loading, setLoading] = useState(false);
     const [isLoginOpen, setIsLoginOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [notices, setNotices] = useState<any[]>([]);
 
     useEffect(() => {
+        // Fetch notices
+        const fetchNotices = async () => {
+            const { getNotices } = await import('@/actions/notices');
+            const res = await getNotices(3);
+            if (res.success) setNotices(res.data);
+        };
+        fetchNotices();
         console.log("Starting Slideshow Interval");
         const interval = setInterval(() => {
             setCurrentImageIndex((prev) => {
-                const next = (prev + 1) % navyImages.length;
+                const next = (prev + 1) % 8;
                 console.log("Changing slide to:", next);
                 return next;
             });

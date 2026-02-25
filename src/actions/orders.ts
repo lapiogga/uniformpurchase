@@ -127,6 +127,29 @@ export async function getRecentOrders(storeId: string, limit: number = 10) {
         return { success: false, error: '주문 내역을 불러오는 중 오류가 발생했습니다.' };
     }
 }
+
+/**
+ * 특정 사용자의 온라인 주문 내역 조회
+ */
+export async function getUserOnlineOrders(userId: string, limit: number = 5) {
+    try {
+        const result = await query(`
+            SELECT o.*, 
+                   (SELECT string_agg(p.name, ', ') 
+                    FROM order_items oi 
+                    JOIN products p ON oi.product_id = p.id 
+                    WHERE oi.order_id = o.id) as product_names
+            FROM orders o
+            WHERE o.user_id = $1 AND o.order_type = 'online'
+            ORDER BY o.created_at DESC
+            LIMIT $2
+        `, [userId, limit]);
+        return { success: true, data: result.rows };
+    } catch (error) {
+        console.error('Failed to fetch user online orders:', error);
+        return { success: false, error: '주문 내역을 불러오는 중 오류가 발생했습니다.' };
+    }
+}
 /**
  * 오프라인 판매 등록 (REQ-S-001, REQ-S-002)
  * @param data 사용자 ID, 판매소 ID, 판매 항목 등
