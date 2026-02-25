@@ -248,3 +248,32 @@ CREATE TRIGGER update_product_specs_modtime BEFORE UPDATE ON product_specs FOR E
 CREATE TRIGGER update_inventory_modtime BEFORE UPDATE ON inventory FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_orders_modtime BEFORE UPDATE ON orders FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_tailoring_tickets_modtime BEFORE UPDATE ON tailoring_tickets FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- 공지사항 (notices)
+CREATE TABLE notices (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    is_active BOOLEAN DEFAULT true,
+    is_priority BOOLEAN DEFAULT false,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 의견수렴/문의 (feedbacks)
+CREATE TABLE feedbacks (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users(id),
+    user_name VARCHAR(100),
+    user_email VARCHAR(255),
+    title VARCHAR(255),
+    content TEXT NOT NULL,
+    reply_content TEXT,
+    status VARCHAR(20) DEFAULT 'pending', -- pending, replied
+    replied_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TRIGGER update_notices_modtime BEFORE UPDATE ON notices FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_feedbacks_modtime BEFORE UPDATE ON feedbacks FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
