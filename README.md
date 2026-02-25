@@ -14,12 +14,23 @@ View your app in AI Studio: https://ai.studio/apps/daa286cf-373d-49e2-91bf-6c8cc
 - [상세 개발계획서](./개발계획상세.md)
 - [변경이력 (CHANGELOG)](./CHANGELOG.md)
 
-### Current Status
-- **Authentication & Security**: Integrated real database login, cookie-based sessions, and secure logout.
-- **Admin Dashboard**: Revamped with real-time metrics and operational status overview.
-- **User Management**: Completed (Search, Registration, Editing, Role-based filtering).
-- **Point Management**: Completed (Batch Granting, Promotion Bonus UI).
-- **Product Management**: Hierarchical category selection (3-level) and Specification (Size) management via popups.
+# Navy Archive : Ocean Edition ⚓️
+
+Modern Tactical Luxe Landing Page for Republic of Korea Navy Uniform & Gear Management System.
+
+## Core Identity
+- **Design Philosophy**: Uniqlo-inspired minimalism meets Naval tactical aesthetics.
+- **Key Tagline**: "Deep Blue Honor"
+- **Tech Stack**: Next.js, Tailwind CSS, Lucide Icons, Sonner.
+
+## Key Update Features
+- **Dynamic Hero Slideshow**: 6-image cyclical rotation (3s interval) with real-time pagination.
+- **Bold Typography**: High-impact Noto Sans KR & S-Core Dream font system.
+- **Shipboard Life Guide**: Dedicated informational page for personnel logistics.
+- **Smart Dashboard**: Integrated login protocol and inventory visualizer.
+
+## Knowledge Base
+Refer to `.agent/knowledge/` for detailed design tokens and AI 구동 가이드.
 - **Sales & Store Dashboard**: Personalized for managers with real-time tracking based on session data.
 
 ## Prerequisites
